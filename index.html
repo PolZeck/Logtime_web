@@ -23,7 +23,7 @@
       results.innerHTML = "⏳ Chargement...";
 
       try {
-        const res = await fetch(`https://<TON-BACKEND>.onrender.com/logtime?login=${login}`);
+        const res = await fetch(`https://logtime-web.onrender.com/logtime?login=${login}`);
         const data = await res.json();
 
         if (data.error) {
