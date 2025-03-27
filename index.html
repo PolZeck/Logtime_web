@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Logtime 42</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
+    input, button { padding: 0.5rem; margin-right: 0.5rem; }
+    #results { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h2>🔎 Vérifie ton Logtime 42</h2>
+  <input type="text" id="login" placeholder="ex: pledieu">
+  <button onclick="fetchLogtime()">Afficher</button>
+
+  <div id="results"></div>
+
+  <script>
+    async function fetchLogtime() {
+      const login = document.getElementById("login").value;
+      const results = document.getElementById("results");
+      results.innerHTML = "⏳ Chargement...";
+
+      try {
+        const res = await fetch(`https://<TON-BACKEND>.onrender.com/logtime?login=${login}`);
+        const data = await res.json();
+
+        if (data.error) {
+          results.innerHTML = "❌ Erreur : " + data.error;
+        } else {
+          results.innerHTML = `
+            <h3>Résultat pour <strong>${login}</strong></h3>
+            <p>📅 Aujourd'hui : ${data.today}</p>
+            <p>📆 Cette semaine : ${data.week}</p>
+            <p>🗓️ Ce mois : ${data.month}</p>
+          `;
+        }
+      } catch (e) {
+        results.innerHTML = "❌ Erreur de requête.";
+      }
+    }
+  </script>
+</body>
+</html>
