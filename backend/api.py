@@ -1,14 +1,18 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from logtime_core import get_logtime_report_for, calculate_remaining_times
 import os
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 @app.route("/logtime")
 def logtime():
     login = request.args.get("login")
     if not login:
         return jsonify({"error": "Login manquant"}), 400
+    print(f"Requête reçue pour le login : {login}")
     try:
         report = get_logtime_report_for(login)
         remaining_week, remaining_month = calculate_remaining_times(
