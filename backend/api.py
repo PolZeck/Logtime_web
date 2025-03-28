@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from logtime_core import get_logtime_report_for, calculate_remaining_times
+import os
 
 app = Flask(__name__)
 
@@ -22,3 +23,7 @@ def logtime():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
