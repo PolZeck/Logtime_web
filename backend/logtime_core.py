@@ -108,6 +108,7 @@ def get_logtime_report():
     sessions = get_logtime_data()
     now = datetime.now(timezone.utc)
 
+    # Début et fin des périodes en UTC
     start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
     end_of_today = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 
@@ -119,14 +120,19 @@ def get_logtime_report():
 
     logtime_today = calculate_logtime(sessions, start_of_today, end_of_today)
     logtime_week = calculate_logtime(sessions, start_of_week, end_of_week)
-    logtime_month = calculate_logtime(sessions, start_of_month, end_of_month)
+    
+    # → On calcule d'abord le logtime mensuel réel
+    logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month)
+    
+    # → Puis on applique -10min juste pour affichage
+    logtime_month_display = max(0, logtime_month_raw - 10 * 60)
 
     return {
         "today": format_time(logtime_today),
         "week": format_time(logtime_week),
-        "month": format_time(logtime_month),
+        "month": format_time(logtime_month_display),
         "week_raw": logtime_week,
-        "month_raw": logtime_month,
+        "month_raw": logtime_month_raw,
         "now": now
     }
 
