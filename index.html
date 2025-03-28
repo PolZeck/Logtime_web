@@ -4,15 +4,72 @@
   <meta charset="UTF-8">
   <title>Logtime 42</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    input, button { padding: 0.5rem; margin-right: 0.5rem; }
-    #results { margin-top: 2rem; }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    input, button {
+      padding: 0.6rem;
+      font-size: 1rem;
+    }
+
+    input {
+      flex: 1;
+      margin-right: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #results {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <h2>🔎 Vérifie ton Logtime 42</h2>
-  <input type="text" id="login" placeholder="ex: pledieu">
-  <button onclick="fetchLogtime()">Afficher</button>
+
+  <div class="input-container">
+    <input type="text" id="login" placeholder="ex: pledieu">
+    <button onclick="fetchLogtime()">Afficher</button>
+  </div>
 
   <div id="results"></div>
 
@@ -27,17 +84,19 @@
         const data = await res.json();
 
         if (data.error) {
-          results.innerHTML = "❌ Erreur : " + data.error;
+          results.innerHTML = `<p class="error">❌ Erreur : ${data.error}</p>`;
         } else {
           results.innerHTML = `
             <h3>Résultat pour <strong>${login}</strong></h3>
-            <p>📅 Aujourd'hui : ${data.today}</p>
-            <p>📆 Cette semaine : ${data.week}</p>
-            <p>🗓️ Ce mois : ${data.month}</p>
+            <p>📅 Aujourd'hui : <strong>${data.today}</strong></p>
+            <p>📆 Cette semaine : <strong>${data.week}</strong></p>
+            <p>🗓️ Ce mois : <strong>${data.month}</strong></p>
+            <hr>
+            <p>⏳ Temps restant pour le mois : <strong>${data.remaining_month}</strong></p>
           `;
         }
       } catch (e) {
-        results.innerHTML = "❌ Erreur de requête : " + e;
+        results.innerHTML = `<p class="error">❌ Erreur de requête : ${e}</p>`;
       }
     }
   </script>
