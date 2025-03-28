@@ -4,7 +4,7 @@ from logtime_core import get_logtime_report_for, calculate_remaining_times
 import os
 
 app = Flask(__name__)
-CORS(app)  # ← autorise l'accès depuis ton site GitHub Pages
+CORS(app, origins=["https://polzeck.github.io"])
 
 
 @app.route("/logtime")
