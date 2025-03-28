@@ -24,7 +24,7 @@ def logtime():
             "month": report["month"],
             "remaining_week": remaining_week,
             "remaining_month": remaining_month,
-            "month_raw": report["month_raw"]  # 👈 Ajoute ça !
+            "month_raw": report["month_raw"]
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
