@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from logtime_core import get_logtime_report_for, calculate_remaining_times
 import os
 
 app = Flask(__name__)
+CORS(app)  # ← autorise l'accès depuis ton site GitHub Pages
+
 
 @app.route("/logtime")
 def logtime():
