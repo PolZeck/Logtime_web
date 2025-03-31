@@ -84,8 +84,8 @@ def calculate_logtime(sessions, start_date, end_date, now=None):
 
 # --- FORMATTAGE TEMPS ---
 def format_time(seconds):
-    hours = int(seconds // 3600)
-    minutes = int((seconds % 3600) // 60)
+    total_minutes = round(seconds / 60)
+    hours, minutes = divmod(total_minutes, 60)
     return f"{hours}h {minutes}min"
 
 # --- CALCUL DES OBJECTIFS ---
