@@ -133,7 +133,7 @@ def get_logtime_report():
         "week": format_time(logtime_week),
         "month": format_time(logtime_month_display),
         "week_raw": logtime_week,
-        "month_raw": logtime_month_raw,
+        "month_raw": logtime_month_display,
         "now": now
     }
 
