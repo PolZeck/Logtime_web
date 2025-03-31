@@ -50,7 +50,7 @@ def calculate_logtime(sessions, start_date, end_date, now=None):
     if now is None:
         now = datetime.now(timezone.utc)
     sessions = sorted(sessions, key=lambda s: s["begin_at"])
-    now = datetime.now(timezone.utc)
+    
     merged_intervals = []
 
     for session in sessions:
@@ -60,7 +60,6 @@ def calculate_logtime(sessions, start_date, end_date, now=None):
             datetime.strptime(end_raw, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
             if end_raw else now
         )
-
 
         if begin_at >= end_date or end_at <= start_date:
             continue
@@ -79,8 +78,11 @@ def calculate_logtime(sessions, start_date, end_date, now=None):
             else:
                 merged_intervals.append((begin_at, end_at))
 
+    # 👇 Somme finale + arrondi à la minute la plus proche
     total_seconds = sum((end - start).total_seconds() for start, end in merged_intervals)
-    return total_seconds
+    total_minutes = int(total_seconds / 60 + 0.5)  # arrondi propre à la minute
+    return total_minutes * 60  # renvoie un multiple de 60s (donc arrondi par minute)
+
 
 # --- FORMATTAGE TEMPS ---
 def format_time(seconds):
