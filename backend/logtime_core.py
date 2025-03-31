@@ -46,7 +46,9 @@ def get_logtime_data():
     return all_sessions
 
 # --- CALCUL DU TEMPS EN FUSIONNANT LES SESSIONS ---
-def calculate_logtime(sessions, start_date, end_date, subtract_minutes=False):
+def calculate_logtime(sessions, start_date, end_date, now=None):
+    if now is None:
+        now = datetime.now(timezone.utc)
     sessions = sorted(sessions, key=lambda s: s["begin_at"])
     now = datetime.now(timezone.utc)
     merged_intervals = []
@@ -119,11 +121,10 @@ def get_logtime_report():
     start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     end_of_month = end_of_today
 
-    logtime_today = calculate_logtime(sessions, start_of_today, end_of_today)
-    logtime_week = calculate_logtime(sessions, start_of_week, end_of_week)
-    
-    # → On calcule d'abord le logtime mensuel réel
-    logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month)
+    logtime_today = calculate_logtime(sessions, start_of_today, end_of_today, now)
+    logtime_week = calculate_logtime(sessions, start_of_week, end_of_week, now)
+    logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now)
+
     
     # → Puis on applique -10min juste pour affichage
     logtime_month_display = max(0, logtime_month_raw - 10 * 60)
