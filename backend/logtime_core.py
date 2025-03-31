@@ -58,8 +58,9 @@ def calculate_logtime(sessions, start_date, end_date, now=None):
         end_raw = session["end_at"]
         end_at = (
             datetime.strptime(end_raw, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
-            if end_raw else now - timedelta(minutes=10) if subtract_minutes else now
+            if end_raw else now
         )
+
 
         if begin_at >= end_date or end_at <= start_date:
             continue
