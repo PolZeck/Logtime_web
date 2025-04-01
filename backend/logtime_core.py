@@ -103,12 +103,12 @@ def calculate_daily_logtime(sessions, start_date, end_date, now=None):
 
 
 # --- CALCUL DU TEMPS EN FUSIONNANT LES SESSIONS ---
-def calculate_logtime(sessions, start_date, end_date, now=None):
+def calculate_logtime(sessions, start_date, end_date, now=None, round_daily=False):
     if now is None:
         now = datetime.now(timezone.utc)
+
     sessions = sorted(sessions, key=lambda s: s["begin_at"])
-    
-    merged_intervals = []
+    grouped_by_day = {}
 
     for session in sessions:
         begin_at = datetime.strptime(session["begin_at"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
@@ -124,21 +124,39 @@ def calculate_logtime(sessions, start_date, end_date, now=None):
         begin_at = max(begin_at, start_date)
         end_at = min(end_at, end_date)
 
-        if not merged_intervals:
-            merged_intervals.append((begin_at, end_at))
-        else:
-            last_begin, last_end = merged_intervals[-1]
-            if begin_at <= last_end:
-                new_begin = min(last_begin, begin_at)
-                new_end = max(last_end, end_at)
-                merged_intervals[-1] = (new_begin, new_end)
-            else:
-                merged_intervals.append((begin_at, end_at))
+        day = begin_at.date() if round_daily else None
+        key = day if round_daily else 0
 
-    # 👇 Somme finale + arrondi à la minute la plus proche
-    total_seconds = sum((end - start).total_seconds() for start, end in merged_intervals)
-    total_minutes = int(total_seconds / 60 + 0.5)  # arrondi propre à la minute
-    return total_minutes * 60  # renvoie un multiple de 60s (donc arrondi par minute)
+        if key not in grouped_by_day:
+            grouped_by_day[key] = []
+
+        grouped_by_day[key].append((begin_at, end_at))
+
+    total_seconds = 0
+
+    for intervals in grouped_by_day.values():
+        intervals.sort()
+        merged = []
+
+        for begin, end in intervals:
+            if not merged:
+                merged.append((begin, end))
+            else:
+                last_begin, last_end = merged[-1]
+                if begin <= last_end:
+                    merged[-1] = (last_begin, max(last_end, end))
+                else:
+                    merged.append((begin, end))
+
+        seconds = sum((end - start).total_seconds() for start, end in merged)
+
+        if round_daily:
+            minutes = int(seconds / 60 + 0.5)
+            total_seconds += minutes * 60
+        else:
+            total_seconds += seconds
+
+    return total_seconds
 
 
 # --- FORMATTAGE TEMPS ---
@@ -174,7 +192,6 @@ def get_logtime_report():
     sessions = get_logtime_data()
     now = datetime.now(timezone.utc)
 
-    # Début et fin des périodes en UTC
     start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
     end_of_today = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 
@@ -184,12 +201,12 @@ def get_logtime_report():
     start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     end_of_month = end_of_today
 
-    logtime_today = calculate_logtime(sessions, start_of_today, end_of_today, now)
-    logtime_week = calculate_logtime(sessions, start_of_week, end_of_week, now)
-    logtime_month_raw = calculate_daily_logtime(sessions, start_of_month, end_of_month, now)
+    # Utilisation cohérente de l'arrondi quotidien
+    logtime_today = calculate_logtime(sessions, start_of_today, end_of_today, now, round_daily=True)
+    logtime_week = calculate_logtime(sessions, start_of_week, end_of_week, now, round_daily=True)
+    logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now, round_daily=True)
 
-    
-    # → Puis on applique -10min juste pour affichage
+    # ⏳ Affichage mois avec -10min
     logtime_month_display = max(0, logtime_month_raw - 10 * 60)
 
     return {
