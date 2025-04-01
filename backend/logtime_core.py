@@ -196,25 +196,27 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
     from holidays import France
     fr_holidays = France(years=now.year)
 
-    # 📆 Période hebdo réaliste
+    # 📅 Semaine commençant au lundi, mais pas avant le début du mois
     start_of_week = max(
         (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0),
         now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     )
     end_of_week = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 
-    # 🔢 Jours ouvrés de la semaine dans le mois courant
+    # 🔍 Jours ouvrés de la semaine dans le mois courant
     working_days = []
     current_day = start_of_week.date()
     while current_day <= end_of_week.date():
-        if current_day.weekday() < 5 and current_day not in fr_holidays:
+        if (current_day.month == now.month and
+            current_day.weekday() < 5 and
+            current_day not in fr_holidays):
             working_days.append(current_day)
         current_day += timedelta(days=1)
 
-    # ✅ Objectif réel de la semaine basé sur jours ouvrés restants
+    # 🎯 Objectif hebdo dynamique
     WEEKLY_GOAL_SEC = len(working_days) * 7 * 3600
 
-    # 🔁 Calcul du logtime sur ces jours uniquement
+    # ⏱️ Logtime réellement fait sur ces jours-là
     sessions = get_logtime_data()
     week_logtime_filtered = 0
     for day in working_days:
@@ -231,6 +233,7 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
     )
     MONTHLY_GOAL_SEC = total_working_days * 7 * 3600 + 5 * 60
 
+    # ⏳ Restes
     remaining_week_sec = max(0, WEEKLY_GOAL_SEC - week_logtime_filtered)
     remaining_month_sec = max(0, MONTHLY_GOAL_SEC - logtime_month_sec)
 
@@ -239,7 +242,6 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
         return f"{h}h {m}min"
 
     return fmt(remaining_week_sec), fmt(remaining_month_sec), MONTHLY_GOAL_SEC
-
 
 # --- RAPPORT COMPLET ---
 def get_logtime_report():
