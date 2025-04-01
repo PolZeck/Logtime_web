@@ -203,7 +203,10 @@ def get_logtime_report():
     start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
     end_of_today = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 
-    start_of_week = (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+    start_of_week = max(
+        (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0),
+        now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)  # début du mois
+    )
     end_of_week = end_of_today
 
     start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
