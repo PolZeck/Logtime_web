@@ -193,20 +193,33 @@ def format_time(seconds):
 
 # --- CALCUL DES OBJECTIFS ---
 def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
-    WEEKLY_GOAL_SEC = calculate_dynamic_weekly_goal(now)
+    from holidays import France
+    fr_holidays = France(years=now.year)
 
-    # 🔁 Calcule le nombre de jours ouvrés (hors WE et jours fériés)
-    fr_holidays = holidays.France(years=now.year)
+    # Objectif mensuel
     total_days = calendar.monthrange(now.year, now.month)[1]
-
     total_working_days = sum(
         1 for day in range(1, total_days + 1)
-        if datetime(now.year, now.month, day).weekday() < 5
-        and datetime(now.year, now.month, day).date() not in fr_holidays
+        if datetime(now.year, now.month, day).weekday() < 5 and
+        datetime(now.year, now.month, day).date() not in fr_holidays
     )
+    MONTHLY_GOAL_SEC = total_working_days * 7 * 3600 + 5 * 60  # +5min extra
 
-    # 🎯 Objectif mensuel + 5 minutes supplémentaires
-    MONTHLY_GOAL_SEC = total_working_days * 7 * 3600 + 5 * 60
+    # Objectif hebdo dynamique (en lien avec le mois courant)
+    start_of_week = max(
+        (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0),
+        now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    )
+    end_of_week = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+    working_days = 0
+    current_day = start_of_week.date()
+    while current_day <= end_of_week.date():
+        if current_day.weekday() < 5 and current_day not in fr_holidays:
+            working_days += 1
+        current_day += timedelta(days=1)
+
+    WEEKLY_GOAL_SEC = working_days * 7 * 3600
 
     remaining_week_sec = max(0, WEEKLY_GOAL_SEC - logtime_week_sec)
     remaining_month_sec = max(0, MONTHLY_GOAL_SEC - logtime_month_sec)
@@ -216,6 +229,7 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
         return f"{h}h {m}min"
 
     return fmt(remaining_week_sec), fmt(remaining_month_sec), MONTHLY_GOAL_SEC
+
 
 # --- RAPPORT COMPLET ---
 def get_logtime_report():
