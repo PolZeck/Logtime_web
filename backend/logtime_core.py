@@ -196,23 +196,14 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
     from holidays import France
     fr_holidays = France(years=now.year)
 
-    # 🎯 Objectif mensuel (jours ouvrés hors jours fériés)
-    total_days = calendar.monthrange(now.year, now.month)[1]
-    total_working_days = sum(
-        1 for day in range(1, total_days + 1)
-        if datetime(now.year, now.month, day).weekday() < 5
-        and datetime(now.year, now.month, day).date() not in fr_holidays
-    )
-    MONTHLY_GOAL_SEC = total_working_days * 7 * 3600 + 5 * 60
-
-    # 📆 Période hebdo réaliste (en tenant compte du mois)
+    # 📆 Période hebdo réaliste
     start_of_week = max(
         (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0),
         now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     )
     end_of_week = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 
-    # 🔢 Calcul des jours ouvrés réels de la semaine (dans le mois et hors jours fériés)
+    # 🔢 Jours ouvrés de la semaine dans le mois courant
     working_days = []
     current_day = start_of_week.date()
     while current_day <= end_of_week.date():
@@ -220,15 +211,25 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
             working_days.append(current_day)
         current_day += timedelta(days=1)
 
+    # ✅ Objectif réel de la semaine basé sur jours ouvrés restants
     WEEKLY_GOAL_SEC = len(working_days) * 7 * 3600
 
-    # ✅ Recalcul du logtime sur ces jours uniquement
+    # 🔁 Calcul du logtime sur ces jours uniquement
     sessions = get_logtime_data()
     week_logtime_filtered = 0
     for day in working_days:
         start = datetime(day.year, day.month, day.day, tzinfo=timezone.utc)
         end = start + timedelta(days=1)
         week_logtime_filtered += calculate_logtime(sessions, start, end, round_daily=True)
+
+    # 🎯 Objectif mensuel (inchangé)
+    total_days = calendar.monthrange(now.year, now.month)[1]
+    total_working_days = sum(
+        1 for day in range(1, total_days + 1)
+        if datetime(now.year, now.month, day).weekday() < 5
+        and datetime(now.year, now.month, day).date() not in fr_holidays
+    )
+    MONTHLY_GOAL_SEC = total_working_days * 7 * 3600 + 5 * 60
 
     remaining_week_sec = max(0, WEEKLY_GOAL_SEC - week_logtime_filtered)
     remaining_month_sec = max(0, MONTHLY_GOAL_SEC - logtime_month_sec)
