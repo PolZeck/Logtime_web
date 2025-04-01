@@ -264,13 +264,10 @@ def get_logtime_report():
     logtime_today = calculate_logtime(sessions, start_of_today, end_of_today, now, round_daily=True)
     logtime_week = calculate_logtime(sessions, start_of_week, end_of_week, now, round_daily=True)
     logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now, round_daily=True)
-    remaining_week, remaining_month, monthly_goal_sec = calculate_remaining_times(
-        now, logtime_week, logtime_month_raw
-    )
-    monthly_goal_hours = int(monthly_goal_sec // 3600)
     remaining_week, remaining_month, monthly_goal_sec, weekly_goal_sec = calculate_remaining_times(
         now, logtime_week, logtime_month_raw
     )
+    monthly_goal_hours = int(monthly_goal_sec // 3600)
     weekly_goal_hours = int(weekly_goal_sec // 3600)
 
 
@@ -285,10 +282,11 @@ def get_logtime_report():
         "month_raw": logtime_month_display,
         "now": now,
         "remaining_month": remaining_month,
-        "monthly_goal_hours": monthly_goal_hours,
         "remaining_week": remaining_week,
-        "weekly_goal_hours": weekly_goal_hours
+        "monthly_goal_hours": monthly_goal_hours,
+        "weekly_goal_hours": weekly_goal_hours  # 👈 à ajouter
     }
+
 
 # --- Entrée dynamique ---
 def get_logtime_report_for(login):
