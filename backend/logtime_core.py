@@ -260,18 +260,37 @@ def get_logtime_report():
     start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     end_of_month = end_of_today
 
-    # Utilisation cohérente de l'arrondi quotidien
+    # 🇫🇷 Jours ouvrés de la semaine dans le mois courant
+    from holidays import France
+    fr_holidays = France(years=now.year)
+
+    working_days_this_week = []
+    current_day = start_of_week.date()
+    while current_day <= end_of_week.date():
+        if (current_day.month == now.month and
+            current_day.weekday() < 5 and
+            current_day not in fr_holidays):
+            working_days_this_week.append(current_day)
+        current_day += timedelta(days=1)
+
+    # Recalcule logtime_week avec arrondi quotidien, uniquement sur ces jours
+    logtime_week = 0
+    for day in working_days_this_week:
+        start = datetime(day.year, day.month, day.day, tzinfo=timezone.utc)
+        end = start + timedelta(days=1)
+        logtime_week += calculate_logtime(sessions, start, end, now, round_daily=True)
+
+    # Aujourd'hui et le mois restent inchangés
     logtime_today = calculate_logtime(sessions, start_of_today, end_of_today, now, round_daily=True)
-    logtime_week = calculate_logtime(sessions, start_of_week, end_of_week, now, round_daily=True)
     logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now, round_daily=True)
+
     remaining_week, remaining_month, monthly_goal_sec, weekly_goal_sec = calculate_remaining_times(
         now, logtime_week, logtime_month_raw
     )
+
     monthly_goal_hours = int(monthly_goal_sec // 3600)
     weekly_goal_hours = int(weekly_goal_sec // 3600)
 
-
-    # ⏳ Affichage mois avec -10min
     logtime_month_display = max(0, logtime_month_raw)
 
     return {
@@ -284,7 +303,7 @@ def get_logtime_report():
         "remaining_month": remaining_month,
         "remaining_week": remaining_week,
         "monthly_goal_hours": monthly_goal_hours,
-        "weekly_goal_hours": weekly_goal_hours  # 👈 à ajouter
+        "weekly_goal_hours": weekly_goal_hours
     }
 
 
