@@ -45,6 +45,63 @@ def get_logtime_data():
 
     return all_sessions
 
+def calculate_daily_logtime(sessions, start_date, end_date, now=None):
+    if now is None:
+        now = datetime.now(timezone.utc)
+
+    # Trie les sessions par début
+    sessions = sorted(sessions, key=lambda s: s["begin_at"])
+    daily_totals = {}
+
+    for session in sessions:
+        begin_at = datetime.strptime(session["begin_at"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+        end_raw = session["end_at"]
+        end_at = (
+            datetime.strptime(end_raw, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+            if end_raw else now
+        )
+
+        # Ignore hors période
+        if begin_at >= end_date or end_at <= start_date:
+            continue
+
+        # Tronque aux limites
+        begin_at = max(begin_at, start_date)
+        end_at = min(end_at, end_date)
+
+        day_key = begin_at.date()
+        if day_key not in daily_totals:
+            daily_totals[day_key] = []
+
+        daily_totals[day_key].append((begin_at, end_at))
+
+    total_seconds = 0
+
+    for intervals in daily_totals.values():
+        # Fusion des intervalles de la journée
+        intervals.sort()
+        merged = []
+
+        for begin, end in intervals:
+            if not merged:
+                merged.append((begin, end))
+            else:
+                last_begin, last_end = merged[-1]
+                if begin <= last_end:
+                    merged[-1] = (last_begin, max(last_end, end))
+                else:
+                    merged.append((begin, end))
+
+        # Calcul du total de la journée
+        daily_seconds = sum((end - start).total_seconds() for start, end in merged)
+
+        # ✅ Arrondi à la minute la plus proche (journée entière)
+        rounded_minutes = int(daily_seconds / 60 + 0.5)
+        total_seconds += rounded_minutes * 60
+
+    return total_seconds
+
+
 # --- CALCUL DU TEMPS EN FUSIONNANT LES SESSIONS ---
 def calculate_logtime(sessions, start_date, end_date, now=None):
     if now is None:
@@ -129,7 +186,7 @@ def get_logtime_report():
 
     logtime_today = calculate_logtime(sessions, start_of_today, end_of_today, now)
     logtime_week = calculate_logtime(sessions, start_of_week, end_of_week, now)
-    logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now)
+    logtime_month_raw = calculate_daily_logtime(sessions, start_of_month, end_of_month, now)
 
     
     # → Puis on applique -10min juste pour affichage
