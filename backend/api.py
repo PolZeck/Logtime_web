@@ -23,10 +23,11 @@ def logtime():
             "today": report["today"],
             "week": report["week"],
             "month": report["month"],
-            "remaining_week": remaining_week,
-            "remaining_month": remaining_month,
+            "remaining_week": report["remaining_week"],
+            "remaining_month": report["remaining_month"],
             "month_raw": report["month_raw"],
-            "monthly_goal_hours": monthly_goal_hours
+            "monthly_goal_hours": report["monthly_goal_hours"],
+            "weekly_goal_hours": report["weekly_goal_hours"]  # 👈 C'était ça qui manquait
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
