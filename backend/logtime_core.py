@@ -46,6 +46,29 @@ def get_logtime_data():
 
     return all_sessions
 
+def calculate_dynamic_weekly_goal(now):
+    import holidays
+    WEEKLY_GOAL_PER_DAY_SEC = 7 * 3600
+    fr_holidays = holidays.France(years=now.year)
+
+    # Lundi de la semaine actuelle OU début du mois (si on a changé de mois cette semaine)
+    start_of_week = max(
+        (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0),
+        now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    )
+    end_of_week = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+    current = start_of_week.date()
+    end = end_of_week.date()
+
+    working_days = 0
+    while current <= end:
+        if current.weekday() < 5 and current not in fr_holidays:
+            working_days += 1
+        current += timedelta(days=1)
+
+    return working_days * WEEKLY_GOAL_PER_DAY_SEC
+
 def calculate_daily_logtime(sessions, start_date, end_date, now=None):
     if now is None:
         now = datetime.now(timezone.utc)
@@ -171,7 +194,7 @@ def format_time(seconds):
 
 # --- CALCUL DES OBJECTIFS ---
 def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
-    WEEKLY_GOAL_SEC = 35 * 3600
+    WEEKLY_GOAL_SEC = calculate_dynamic_weekly_goal(now)
 
     # 🔁 Calcule le nombre de jours ouvrés (hors WE et jours fériés)
     fr_holidays = holidays.France(years=now.year)
