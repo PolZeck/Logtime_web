@@ -167,6 +167,9 @@
           const monthTime = data.month_raw / 3600;
           const totalGoal = calculateMonthlyGoal();
           const percent = Math.min(100, Math.round((monthTime / totalGoal) * 100));
+		  const monthlyGoalSeconds = (data.monthly_goal_hours * 3600); // depuis l'API
+		  const progress = Math.min(100, Math.round((data.month_raw / monthlyGoalSeconds) * 100));
+
 
           results.innerHTML = `
             <h3>📊 Résultat pour <strong>${login}</strong></h3>
@@ -177,7 +180,7 @@
             <div class="progress-container">
               <div class="progress-bar" style="width:${percent}%;">${percent}%</div>
             </div>
-            <small>🎯 Objectif mensuel : ${Math.round(totalGoal)}h</small>
+			<p>🎯 Objectif mensuel : ${data.monthly_goal_hours}h</p>
           `;
         }
       } catch (e) {
