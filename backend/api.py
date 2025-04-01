@@ -15,8 +15,8 @@ def logtime():
     print(f"Requête reçue pour le login : {login}")
     try:
         report = get_logtime_report_for(login)
-        remaining_week, remaining_month, monthly_goal_sec = calculate_remaining_times(
-           report["now"], report["week_raw"], report["month_raw"]
+        remaining_week, remaining_month, monthly_goal_sec, weekly_goal_sec = calculate_remaining_times(
+            report["now"], report["week_raw"], report["month_raw"]
         )
         monthly_goal_hours = int(monthly_goal_sec // 3600)
         return jsonify({
