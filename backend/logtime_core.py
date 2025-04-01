@@ -96,12 +96,50 @@ def format_time(seconds):
 # --- CALCUL DES OBJECTIFS ---
 def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
     WEEKLY_GOAL_SEC = 35 * 3600
+
+    # 🇫🇷 Jours fériés français simples + mobiles
+    def get_french_holidays(year):
+        # Pâques (algorithme de Meeus)
+        a = year % 19
+        b = year // 100
+        c = year % 100
+        d = b // 4
+        e = b % 4
+        f = (b + 8) // 25
+        g = (b - f + 1) // 3
+        h = (19 * a + b - d - g + 15) % 30
+        i = c // 4
+        k = c % 4
+        l = (32 + 2 * e + 2 * i - h - k) % 7
+        m = (a + 11 * h + 22 * l) // 451
+        month = (h + l - 7 * m + 114) // 31
+        day = ((h + l - 7 * m + 114) % 31) + 1
+        easter = datetime(year, month, day)
+
+        return {
+            datetime(year, 1, 1),   # Jour de l'an
+            datetime(year, 5, 1),   # Fête du Travail
+            datetime(year, 5, 8),   # Victoire 1945
+            datetime(year, 7, 14),  # Fête nationale
+            datetime(year, 8, 15),  # Assomption
+            datetime(year, 11, 1),  # Toussaint
+            datetime(year, 11, 11), # Armistice
+            datetime(year, 12, 25), # Noël
+            easter + timedelta(days=1),   # Lundi de Pâques
+            easter + timedelta(days=39),  # Ascension
+            easter + timedelta(days=50),  # Lundi de Pentecôte
+        }
+
     total_days = calendar.monthrange(now.year, now.month)[1]
+    holidays = get_french_holidays(now.year)
     total_working_days = sum(
         1 for day in range(1, total_days + 1)
         if datetime(now.year, now.month, day).weekday() < 5
+        and datetime(now.year, now.month, day).replace(tzinfo=timezone.utc) not in holidays
     )
-    MONTHLY_GOAL_SEC = total_working_days * 7 * 3600
+
+    # 🎯 Objectif mensuel avec +5min d'encouragement
+    MONTHLY_GOAL_SEC = total_working_days * 7 * 3600 + 5 * 60
 
     remaining_week_sec = max(0, WEEKLY_GOAL_SEC - logtime_week_sec)
     remaining_month_sec = max(0, MONTHLY_GOAL_SEC - logtime_month_sec)
