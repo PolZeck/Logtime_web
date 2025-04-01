@@ -207,7 +207,7 @@ def get_logtime_report():
     logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now, round_daily=True)
 
     # ⏳ Affichage mois avec -10min
-    logtime_month_display = max(0, logtime_month_raw - 10 * 60)
+    logtime_month_display = max(0, logtime_month_raw)
 
     return {
         "today": format_time(logtime_today),
