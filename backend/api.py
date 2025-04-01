@@ -15,16 +15,18 @@ def logtime():
     print(f"Requête reçue pour le login : {login}")
     try:
         report = get_logtime_report_for(login)
-        remaining_week, remaining_month = calculate_remaining_times(
-            report["now"], report["week_raw"], report["month_raw"]
+        remaining_week, remaining_month, monthly_goal_sec = calculate_remaining_times(
+           report["now"], report["week_raw"], report["month_raw"]
         )
+        monthly_goal_hours = int(monthly_goal_sec // 3600)
         return jsonify({
             "today": report["today"],
             "week": report["week"],
             "month": report["month"],
             "remaining_week": remaining_week,
             "remaining_month": remaining_month,
-            "month_raw": report["month_raw"]
+            "month_raw": report["month_raw"],
+            "monthly_goal_hours": monthly_goal_hours
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
