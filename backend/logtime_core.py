@@ -193,7 +193,7 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
         h, m = divmod(int(sec) // 60, 60)
         return f"{h}h {m}min"
 
-    return fmt(remaining_week_sec), fmt(remaining_month_sec)
+    return fmt(remaining_week_sec), fmt(remaining_month_sec), MONTHLY_GOAL_SEC
 
 # --- RAPPORT COMPLET ---
 def get_logtime_report():
@@ -213,6 +213,11 @@ def get_logtime_report():
     logtime_today = calculate_logtime(sessions, start_of_today, end_of_today, now, round_daily=True)
     logtime_week = calculate_logtime(sessions, start_of_week, end_of_week, now, round_daily=True)
     logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now, round_daily=True)
+    remaining_week, remaining_month, monthly_goal_sec = calculate_remaining_times(
+        now, logtime_week, logtime_month_raw
+    )
+    monthly_goal_hours = int(monthly_goal_sec // 3600)
+
 
     # ⏳ Affichage mois avec -10min
     logtime_month_display = max(0, logtime_month_raw)
@@ -223,7 +228,9 @@ def get_logtime_report():
         "month": format_time(logtime_month_display),
         "week_raw": logtime_week,
         "month_raw": logtime_month_display,
-        "now": now
+        "now": now,
+        "remaining_month": remaining_month,
+        "monthly_goal_hours": monthly_goal_hours
     }
 
 # --- Entrée dynamique ---
