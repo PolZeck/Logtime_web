@@ -4,6 +4,7 @@ import requests
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import calendar
+import holidays 
 
 load_dotenv()
 
@@ -169,14 +170,23 @@ def format_time(seconds):
 
 
 # --- CALCUL DES OBJECTIFS ---
+ # à mettre en haut du fichier si ce n'est pas déjà fait
+
 def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
     WEEKLY_GOAL_SEC = 35 * 3600
+
+    # 🔁 Calcule le nombre de jours ouvrés (hors WE et jours fériés)
+    fr_holidays = holidays.France(years=now.year)
     total_days = calendar.monthrange(now.year, now.month)[1]
+
     total_working_days = sum(
         1 for day in range(1, total_days + 1)
         if datetime(now.year, now.month, day).weekday() < 5
+        and datetime(now.year, now.month, day).date() not in fr_holidays
     )
-    MONTHLY_GOAL_SEC = total_working_days * 7 * 3600
+
+    # 🎯 Objectif mensuel + 5 minutes supplémentaires
+    MONTHLY_GOAL_SEC = total_working_days * 7 * 3600 + 5 * 60
 
     remaining_week_sec = max(0, WEEKLY_GOAL_SEC - logtime_week_sec)
     remaining_month_sec = max(0, MONTHLY_GOAL_SEC - logtime_month_sec)
@@ -207,7 +217,7 @@ def get_logtime_report():
     logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now, round_daily=True)
 
     # ⏳ Affichage mois avec -10min
-    logtime_month_display = max(0, logtime_month_raw - 5 * 60)
+    logtime_month_display = max(0, logtime_month_raw)
 
     return {
         "today": format_time(logtime_today),
