@@ -170,8 +170,6 @@ def format_time(seconds):
 
 
 # --- CALCUL DES OBJECTIFS ---
- # à mettre en haut du fichier si ce n'est pas déjà fait
-
 def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
     WEEKLY_GOAL_SEC = 35 * 3600
 
