@@ -47,22 +47,21 @@ def get_logtime_data():
     return all_sessions
 
 def calculate_dynamic_weekly_goal(now):
-    import holidays
     WEEKLY_GOAL_PER_DAY_SEC = 7 * 3600
     fr_holidays = holidays.France(years=now.year)
 
-    # Lundi de la semaine actuelle OU début du mois (si on a changé de mois cette semaine)
+    # Lundi de la semaine OU début du mois si on a commencé un nouveau mois cette semaine
     start_of_week = max(
         (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0),
         now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     )
-    end_of_week = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 
-    current = start_of_week.date()
-    end = end_of_week.date()
+    # Dimanche de la semaine actuelle
+    end_of_week = start_of_week + timedelta(days=6)
 
     working_days = 0
-    while current <= end:
+    current = start_of_week.date()
+    while current <= end_of_week.date():
         if current.weekday() < 5 and current not in fr_holidays:
             working_days += 1
         current += timedelta(days=1)
