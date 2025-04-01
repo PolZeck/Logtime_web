@@ -13,16 +13,10 @@ def logtime():
     if not login:
         return jsonify({"error": "Login manquant"}), 400
     print(f"Requête reçue pour le login : {login}")
-
-    if login.lower() == "abouclie":
-        return jsonify({
-            "message": "Dommage abouclie, reviens plus tard..."
-        })
-
     try:
         report = get_logtime_report_for(login)
         remaining_week, remaining_month, monthly_goal_sec = calculate_remaining_times(
-            report["now"], report["week_raw"], report["month_raw"]
+           report["now"], report["week_raw"], report["month_raw"]
         )
         monthly_goal_hours = int(monthly_goal_sec // 3600)
         return jsonify({
@@ -36,7 +30,6 @@ def logtime():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
