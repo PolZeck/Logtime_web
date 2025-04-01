@@ -163,6 +163,10 @@
 
         if (data.error) {
           results.innerHTML = "❌ Erreur : " + data.error;
+		  if (data.message) {
+  			results.innerHTML = "💬 " + data.message;
+  			return;
+		  }
 		} else {
 			const monthlyGoalSeconds = data.monthly_goal_hours * 3600;
 			const percent = Math.min(100, Math.round((data.month_raw / monthlyGoalSeconds) * 100));
