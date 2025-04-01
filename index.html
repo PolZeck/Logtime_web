@@ -163,43 +163,27 @@
 
         if (data.error) {
           results.innerHTML = "❌ Erreur : " + data.error;
-        } else {
-          const monthTime = data.month_raw / 3600;
-          const totalGoal = calculateMonthlyGoal();
-          const percent = Math.min(100, Math.round((monthTime / totalGoal) * 100));
-		  const monthlyGoalSeconds = (data.monthly_goal_hours * 3600); // depuis l'API
-		  const progress = Math.min(100, Math.round((data.month_raw / monthlyGoalSeconds) * 100));
+		} else {
+			const monthlyGoalSeconds = data.monthly_goal_hours * 3600;
+			const percent = Math.min(100, Math.round((data.month_raw / monthlyGoalSeconds) * 100));
 
+			results.innerHTML = `
+				<h3>📊 Résultat pour <strong>${login}</strong></h3>
+				<p>📅 Aujourd'hui : ${data.today}</p>
+				<p>📆 Cette semaine : ${data.week} <br><small>⏳ Reste : ${data.remaining_week}</small></p>
+				<p>🗓️ Ce mois : ${data.month} <br><small>⏳ Reste : ${data.remaining_month}</small></p>
 
-          results.innerHTML = `
-            <h3>📊 Résultat pour <strong>${login}</strong></h3>
-            <p>📅 Aujourd'hui : ${data.today}</p>
-            <p>📆 Cette semaine : ${data.week} <br><small>⏳ Reste : ${data.remaining_week}</small></p>
-            <p>🗓️ Ce mois : ${data.month} <br><small>⏳ Reste : ${data.remaining_month}</small></p>
-
-            <div class="progress-container">
-              <div class="progress-bar" style="width:${percent}%;">${percent}%</div>
-            </div>
-			<p>🎯 Objectif mensuel : ${data.monthly_goal_hours}h</p>
-          `;
-        }
+				<div class="progress-container">
+				<div class="progress-bar" style="width:${percent}%;">${percent}%</div>
+				</div>
+				<p>🎯 Objectif mensuel : ${data.monthly_goal_hours}h</p>
+			`;
+		}
       } catch (e) {
         results.innerHTML = "❌ Erreur de requête : " + e;
       }
     }
 
-    function calculateMonthlyGoal() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      let weekdays = 0;
-      for (let d = 1; d <= daysInMonth; d++) {
-        const day = new Date(year, month, d).getDay();
-        if (day >= 1 && day <= 5) weekdays++;
-      }
-      return weekdays * 7; // 7h par jour ouvré
-    }
   </script>
 </body>
 </html>
