@@ -174,7 +174,7 @@ def calculate_logtime(sessions, start_date, end_date, now=None, round_daily=Fals
         seconds = sum((end - start).total_seconds() for start, end in merged)
 
         if round_daily:
-            minutes = int(seconds / 60 + 0.5)
+            minutes = int(seconds / 60)
             total_seconds += minutes * 60
         else:
             total_seconds += seconds
