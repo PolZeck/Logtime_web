@@ -119,7 +119,7 @@ def calculate_daily_logtime(sessions, start_date, end_date, now=None):
         daily_seconds = sum((end - start).total_seconds() for start, end in merged)
 
         # ✅ Arrondi à la minute la plus proche (journée entière)
-        rounded_minutes = int(daily_seconds / 60 + 0.5)
+        rounded_minutes = int(daily_seconds // 60)
         total_seconds += rounded_minutes * 60
 
     return total_seconds
