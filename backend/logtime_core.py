@@ -185,7 +185,7 @@ def calculate_logtime(sessions, start_date, end_date, now=None, round_daily=Fals
 # --- FORMATTAGE TEMPS ---
 def format_time(seconds):
     total_minutes = seconds / 60
-    rounded_minutes = int(total_minutes + 0.5)  # arrondi à la minute la plus proche
+    rounded_minutes = int(total_minutes)  # arrondi à la minute la plus proche
     hours = rounded_minutes // 60
     minutes = rounded_minutes % 60
     return f"{hours}h {minutes}min"
