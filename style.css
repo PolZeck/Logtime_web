@@ -20,47 +20,40 @@
 	  }
 	  
 	  
-	  
-	  
 	  body {
+		transition: background 1s ease-in-out, color 0.3s ease;
+	}
+	
+	  
+	  
+	  body.light {
 		background: linear-gradient(-45deg,
-		  #cda4a4,  /* vieux rose pâle */
-		  #b3cbb9,  /* vert doux/grisé */
-		  #d6b5b5,  /* rose désaturé */
-		  #a9c8b8,  /* vert tendre */
-		  #e6c1c1   /* rose clair */
+		  #cda4a4,
+		  #b3cbb9,
+		  #d6b5b5,
+		  #a9c8b8,
+		  #e6c1c1
 		);
-		display: flex;
-  		flex-direction: column;
-  		align-items: center;
 		background-size: 400% 400%;
 		animation: gradientRoseGreen 7s ease infinite;
-		min-height: 100vh;
-		margin: 0;
-		padding: 0;
-		font-family: 'Segoe UI', sans-serif;
 		transition: background-color 0.3s, color 0.3s;
-	  }
-	  
-	  
-	  
-	  
-/* 	  
-	  @keyframes gradientFlow {
-		0% { background-position: 0% 50%; }
-		50% { background-position: 100% 50%; }
-		100% { background-position: 0% 50%; }
-	  } */
-	  
-	body.light {
-	/* background-color: #f9f9f9; */
-	color: #222;
+		color: #222;
 	}
-
+	
 	body.dark {
-	/* background-color: #121212; */
-	color: #eee;
+		background: linear-gradient(-45deg,
+		  #363030,
+		  #606661,
+		  #342f2f,
+		  #69706d,
+		  #484545
+		);
+		background-size: 400% 400%;
+		animation: gradientRoseGreen 7s ease infinite;
+		transition: background-color 0.3s, color 0.3s;
+		color: #eee;
 	}
+	
 
 	h2 {
 	text-align: center;
