@@ -71,13 +71,13 @@
 	}
 
 	button {
-	background-color: #4caf50;
+	background-color: #779964;
 	color: white;
 	cursor: pointer;
 	}
 
 	button:hover {
-	background-color: #45a049;
+	background-color: #8ab174;
 	}
 
 	.favorites {
