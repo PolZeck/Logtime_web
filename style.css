@@ -21,12 +21,6 @@
 	  
 	  
 	  body {
-		transition: background 1s ease-in-out, color 0.3s ease;
-	}
-	
-	  
-	  
-	  body.light {
 		background: linear-gradient(-45deg,
 		  #cda4a4,
 		  #b3cbb9,
@@ -36,8 +30,12 @@
 		);
 		background-size: 400% 400%;
 		animation: gradientRoseGreen 7s ease infinite;
-		transition: background-color 0.3s, color 0.3s;
 		color: #222;
+		transition: background 2s ease-in-out, color 1.5s ease;
+	}
+	
+	body.light {
+		/* même background que body par défaut ou variante light si tu préfères */
 	}
 	
 	body.dark {
@@ -50,7 +48,6 @@
 		);
 		background-size: 400% 400%;
 		animation: gradientRoseGreen 7s ease infinite;
-		transition: background-color 0.3s, color 0.3s;
 		color: #eee;
 	}
 	
