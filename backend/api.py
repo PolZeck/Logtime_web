@@ -6,7 +6,6 @@ import os
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-
 @app.route("/logtime")
 def logtime():
     login = request.args.get("login")
@@ -15,19 +14,23 @@ def logtime():
     print(f"Requête reçue pour le login : {login}")
     try:
         report = get_logtime_report_for(login)
+        
+        # 🔁 Corrigé ici : ajout de login en premier argument
         remaining_week, remaining_month, monthly_goal_sec, weekly_goal_sec = calculate_remaining_times(
-            report["now"], report["week_raw"], report["month_raw"]
+            login, report["now"], report["week_raw"], report["month_raw"]
         )
+
         monthly_goal_hours = int(monthly_goal_sec // 3600)
+
         return jsonify({
             "today": report["today"],
             "week": report["week"],
             "month": report["month"],
-            "remaining_week": report["remaining_week"],
-            "remaining_month": report["remaining_month"],
+            "remaining_week": remaining_week,  # ⬅️ corrigé
+            "remaining_month": remaining_month,
             "month_raw": report["month_raw"],
-            "monthly_goal_hours": report["monthly_goal_hours"],
-            "weekly_goal_hours": report["weekly_goal_hours"]  # 👈 C'était ça qui manquait
+            "monthly_goal_hours": monthly_goal_hours,
+            "weekly_goal_hours": int(weekly_goal_sec // 3600)  # 👈 présent et correct
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500

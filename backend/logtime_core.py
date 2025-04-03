@@ -193,7 +193,7 @@ def format_time(seconds):
 
 
 # --- CALCUL DES OBJECTIFS ---
-def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
+def calculate_remaining_times(login, now, logtime_week_sec, logtime_month_sec):
     from holidays import France
     fr_holidays = France(years=now.year)
 
@@ -218,7 +218,7 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
     WEEKLY_GOAL_SEC = len(working_days) * 7 * 3600
 
     # ⏱️ Logtime réellement fait sur ces jours-là
-    sessions = get_logtime_data()
+    sessions = get_logtime_data(login)
     week_logtime_filtered = 0
     for day in working_days:
         start = datetime(day.year, day.month, day.day, tzinfo=timezone.utc)
@@ -283,7 +283,7 @@ def get_logtime_report(login):
     logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now, round_daily=True)
 
     remaining_week, remaining_month, monthly_goal_sec, weekly_goal_sec = calculate_remaining_times(
-        now, logtime_week, logtime_month_raw
+        login, now, logtime_week, logtime_month_raw
     )
 
     monthly_goal_hours = int(monthly_goal_sec // 3600)
