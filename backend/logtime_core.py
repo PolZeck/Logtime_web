@@ -24,14 +24,14 @@ def get_access_token():
     return response.json().get("access_token")
 
 
-def get_logtime_data():
+def get_logtime_data(login):
     token = get_access_token()
     headers = {"Authorization": f"Bearer {token}"}
     all_sessions = []
     page = 1
 
     while True:
-        url = f"https://api.intra.42.fr/v2/users/{USER_LOGIN}/locations?page={page}&per_page=100"
+        url = f"https://api.intra.42.fr/v2/users/{login}/locations?page={page}&per_page=100"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
             print("Erreur API:", response.text)
@@ -45,6 +45,7 @@ def get_logtime_data():
         page += 1
 
     return all_sessions
+
 
 def calculate_dynamic_weekly_goal(now):
     WEEKLY_GOAL_PER_DAY_SEC = 7 * 3600
@@ -244,8 +245,8 @@ def calculate_remaining_times(now, logtime_week_sec, logtime_month_sec):
     return fmt(remaining_week_sec), fmt(remaining_month_sec), MONTHLY_GOAL_SEC, WEEKLY_GOAL_SEC
 
 # --- RAPPORT COMPLET ---
-def get_logtime_report():
-    sessions = get_logtime_data()
+def get_logtime_report(login):
+    sessions = get_logtime_data(login)
     now = datetime.now(timezone.utc)
 
     start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -253,14 +254,13 @@ def get_logtime_report():
 
     start_of_week = max(
         (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0),
-        now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)  # début du mois
+        now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     )
     end_of_week = end_of_today
 
     start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     end_of_month = end_of_today
 
-    # 🇫🇷 Jours ouvrés de la semaine dans le mois courant
     from holidays import France
     fr_holidays = France(years=now.year)
 
@@ -273,14 +273,12 @@ def get_logtime_report():
             working_days_this_week.append(current_day)
         current_day += timedelta(days=1)
 
-    # Recalcule logtime_week avec arrondi quotidien, uniquement sur ces jours
     logtime_week = 0
     for day in working_days_this_week:
         start = datetime(day.year, day.month, day.day, tzinfo=timezone.utc)
         end = start + timedelta(days=1)
         logtime_week += calculate_logtime(sessions, start, end, now, round_daily=True)
 
-    # Aujourd'hui et le mois restent inchangés
     logtime_today = calculate_logtime(sessions, start_of_today, end_of_today, now, round_daily=True)
     logtime_month_raw = calculate_logtime(sessions, start_of_month, end_of_month, now, round_daily=True)
 
@@ -307,8 +305,8 @@ def get_logtime_report():
     }
 
 
+
 # --- Entrée dynamique ---
 def get_logtime_report_for(login):
-    global USER_LOGIN
-    USER_LOGIN = login
-    return get_logtime_report()
+    return get_logtime_report(login)
+
