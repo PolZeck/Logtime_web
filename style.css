@@ -4,20 +4,30 @@
 	}
 
 	body {
-	font-family: 'Segoe UI', sans-serif;
-	padding: 2rem;
-	max-width: 600px;
-	margin: auto;
-	transition: background-color 0.3s, color 0.3s;
-	}
-
+		font-family: 'Orbitron', sans-serif;
+		padding: 2rem;
+		max-width: 600px;
+		margin: auto;
+		transition: background-color 0.3s, color 0.3s;
+		background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #000000);
+		background-size: 400% 400%;
+		animation: gradientFlow 15s ease infinite;
+		color: #eee;
+	  }
+	  
+	  @keyframes gradientFlow {
+		0% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
+		100% { background-position: 0% 50%; }
+	  }
+	  
 	body.light {
-	background-color: #f9f9f9;
+	/* background-color: #f9f9f9; */
 	color: #222;
 	}
 
 	body.dark {
-	background-color: #121212;
+	/* background-color: #121212; */
 	color: #eee;
 	}
 
@@ -83,10 +93,11 @@
 	}
 
 	#results {
-	margin-top: 2rem;
-	padding: 1.2rem;
-	border-radius: 8px;
-	}
+		background-color: rgba(0, 0, 0, 0.5); /* ou rgba(255,255,255,0.6) si en clair */
+		backdrop-filter: blur(6px);
+		box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+	  }
+	  
 
 	body.dark #results {
 	background-color: #1f1f1f;
