@@ -87,7 +87,7 @@
 
 	.favorites button {
 	background-color: #888;
-	color: white;
+	color: white;	
 	margin: 0.3rem;
 	padding: 0.6rem 1rem;
 	width: auto;
@@ -151,6 +151,7 @@
 	}
 
 	body.light #results {
+		padding: 0.5rem;
 		background-color: rgba(255, 255, 255, 0.8);
 		color: #222;
 	  }
@@ -166,7 +167,7 @@
 
 	.progress-bar {
 	height: 100%;
-	background-color: #4caf50;
+	background-color: #779964;
 	text-align: center;
 	color: white;
 	line-height: 20px;
