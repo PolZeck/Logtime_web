@@ -7,23 +7,47 @@
 		height: 100%;
 	  }
 	  
-	body {
-		font-family: 'Orbitron', sans-serif;
-		padding: 2rem;
-		max-width: 600px;
-		margin: auto;
-		transition: background-color 0.3s, color 0.3s;
-		background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #000000);
-		background-size: 400% 400%;
-		animation: gradientFlow 15s ease infinite;
-		color: #eee;
+	  @keyframes gradientRoseGreen {
+		0% {
+		  background-position: 0% 50%;
+		}
+		50% {
+		  background-position: 100% 50%;
+		}
+		100% {
+		  background-position: 0% 50%;
+		}
 	  }
 	  
+	  
+	  
+	  
+	  body {
+		background: linear-gradient(-45deg,
+		  #cda4a4,  /* vieux rose pâle */
+		  #b3cbb9,  /* vert doux/grisé */
+		  #d6b5b5,  /* rose désaturé */
+		  #a9c8b8,  /* vert tendre */
+		  #e6c1c1   /* rose clair */
+		);
+		background-size: 400% 400%;
+		animation: gradientRoseGreen 7s ease infinite;
+		min-height: 100vh;
+		margin: 0;
+		padding: 0;
+		font-family: 'Segoe UI', sans-serif;
+		transition: background-color 0.3s, color 0.3s;
+	  }
+	  
+	  
+	  
+	  
+/* 	  
 	  @keyframes gradientFlow {
 		0% { background-position: 0% 50%; }
 		50% { background-position: 100% 50%; }
 		100% { background-position: 0% 50%; }
-	  }
+	  } */
 	  
 	body.light {
 	/* background-color: #f9f9f9; */
@@ -96,10 +120,36 @@
 	color: #222;
 	}
 
-	#results {
-		background-color: rgba(0, 0, 0, 0.5); /* ou rgba(255,255,255,0.6) si en clair */
+	select {
+		padding: 0.6rem;
+		margin: 0.4rem auto;
+		font-size: 1rem;
+		border-radius: 6px;
+		border: none;
+		max-width: 280px;
+		width: 90%;
+		display: block;
+		background-color: #333;
+		color: #fff;
+	  }
+	  
+	  body.light select {
+		background-color: #eee;
+		color: #222;
+	  }
+	  
+	  #results {
+		margin-top: 2rem;
+		margin-left: auto;
+		margin-right: auto;
+		padding: 1.5rem;
+		border-radius: 10px;
+		width: 100%;
+		max-width: 500px;
+		text-align: left;
+		background-color: rgba(30, 30, 30, 0.6); /* doux + transparent */
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 		backdrop-filter: blur(6px);
-		box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 	  }
 	  
 
@@ -108,8 +158,10 @@
 	}
 
 	body.light #results {
-	background-color: #fff;
-	}
+		background-color: rgba(255, 255, 255, 0.8);
+		color: #222;
+	  }
+	  
 
 	.progress-container {
 	margin-top: 1rem;
@@ -128,34 +180,72 @@
 	font-size: 0.9rem;
 	}
 
-	/* 📱 Responsive layout */
-	@media (max-width: 480px) {
+/* ✅ Responsive avancé */
+@media (max-width: 768px) {
 	body {
-		padding: 1rem;
+	  padding: 1rem;
+	  font-size: 16px;
 	}
-
+  
 	h2 {
-		font-size: 1.3rem;
+	  font-size: 1.3rem;
 	}
-
+  
+	.favorites {
+	  display: flex;
+	  flex-wrap: wrap;
+	  justify-content: center;
+	  gap: 0.5rem;
+	}
+  
 	.favorites button {
-		display: block;
-		width: 100%;
-		margin: 0.3rem auto;
+	  flex: 1 1 45%;
+	  min-width: 120px;
+	  padding: 0.8rem;
+	  font-size: 1rem;
 	}
-
+  
 	input {
-		width: 100%;
+	  width: 90%;
+	  font-size: 1rem;
 	}
-
+  
 	button {
-		width: 100%;
+	  width: 90%;
+	  margin-top: 0.5rem;
+	  font-size: 1rem;
 	}
-
+  
+	#results {
+	  padding: 1rem;
+	  font-size: 1rem;
+	  text-align: center;
+	}
+  
+	.progress-container {
+	  height: 24px;
+	}
+  
+	.progress-bar {
+	  font-size: 0.95rem;
+	  line-height: 24px;
+	}
+  }
+  
+  @media (max-width: 480px) {
+	.favorites button {
+	  flex: 1 1 100%;
+	}
+  
+	h2 {
+	  font-size: 1.1rem;
+	}
+  
 	.toggle-theme {
-		font-size: 1rem;
-		padding: 0.4rem;
-		top: 5px;
-		right: 5px;
+	  top: 8px;
+	  right: 8px;
+	  font-size: 1rem;
+	  padding: 0.4rem 0.6rem;
 	}
-	}
+  }
+  

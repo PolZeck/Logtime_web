@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Logtime 42</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
@@ -12,14 +13,22 @@
   <h2>🔎 Logtime 42 🔎</h2>
 
   <div class="favorites">
-    <strong>⭐ Favoris :</strong><br>
-    <button onclick="selectLogin('pledieu')">pledieu</button>
-    <button onclick="selectLogin('lcosson')">lcosson</button>
-    <button onclick="selectLogin('abouclie')">abouclie</button><br><br>
+	<strong>⭐ Favoris :</strong><br>
+	<select onchange="selectLogin(this.value)">
+	  <option value="">-- Choisir un favori --</option>
+	  <option value="pledieu">pledieu</option>
+	  <option value="lcosson">lcosson</option>
+	  <option value="abouclie">abouclie</option>
+	</select>
+	<br><br>
 	<strong>🤟 Inutiles❗ :</strong><br>
-	<button onclick="selectLogin('vdurand')">vdurand</button>
-	<button onclick="selectLogin('arocca')">arocca</button>
+	<select onchange="selectLogin(this.value)">
+	  <option value="">-- Choisir un inutile --</option>
+	  <option value="vdurand">vdurand</option>
+	  <option value="arocca">arocca</option>
+	</select>
   </div>
+  
   <div style="text-align:center;">
     <input type="text" id="login" placeholder="ex: pledieu">
     <button onclick="fetchLogtime()">Afficher</button>
