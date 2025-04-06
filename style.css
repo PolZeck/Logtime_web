@@ -50,7 +50,9 @@
 		animation: gradientRoseGreen 7s ease infinite;
 		color: #eee;
 	}
-	
+	title {
+		size: 1.5rem;
+	}
 
 	h2 {
 	text-align: center;
