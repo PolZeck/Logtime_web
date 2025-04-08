@@ -215,6 +215,24 @@
 		background: transparent;
 		border: none;
 	  }
+	  /* Amélioration des colonnes de totaux hebdomadaires */
+	.week-total {
+		grid-column: span 7;
+		background-color: rgba(76, 175, 80, 0.1); /* Vert pâle */
+		border-top: 1px solid rgba(0, 0, 0, 0.1);
+		font-weight: bold;
+		text-align: right;
+		padding: 6px 10px;
+		margin-top: 4px;
+		font-size: 0.9rem;
+		color: #333;
+	}
+	
+	body.dark .week-total {
+		background-color: rgba(255, 255, 255, 0.05);
+		color: #eee;
+	}
+  
 	  
 /* ✅ Responsive avancé */
 @media (max-width: 768px) {
