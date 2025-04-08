@@ -63,7 +63,11 @@
 	function generateCalendar(calendarData) {
   const calendarDiv = document.getElementById("calendar");
   calendarDiv.className = "calendar-container";
-  calendarDiv.innerHTML = "<h4>📅 Logtime journalier du mois</h4>";
+  calendarDiv.innerHTML = `
+  <div class="calendar-title-container">
+    <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
+  </div>
+`;
 
   const now = new Date();
   const year = now.getFullYear();
