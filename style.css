@@ -226,7 +226,7 @@
 		background: rgba(255, 255, 255, 0.15);
 		font-weight: bold;
 		text-align: center;
-		min-height: 60px; 
+		margin: 0;
 		grid-column: span 1;
 		border-left: 1px solid rgba(255, 255, 255, 0.05);
 	  }
@@ -416,23 +416,5 @@
 	  font-size: 1rem;
 	  padding: 0.4rem 0.6rem;
 	}
-
-	.calendar-grid {
-		grid-template-columns: repeat(3, 1fr); /* compact encore + */
-	  }
-	
-	  .calendar-legend {
-		grid-template-columns: repeat(3, 1fr);
-	  }
-	
-	  .calendar-day {
-		font-size: 0.7rem;
-		padding: 0.4rem;
-		min-height: 50px;
-	  }
-	
-	  .calendar-day.total {
-		font-size: 0.75rem;
-	  }
   }
   
