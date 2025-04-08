@@ -251,6 +251,33 @@
 		background-color: rgba(255, 255, 255, 0.05);
 		color: #eee;
 	}
+	.calendar-legend {
+		display: grid;
+		grid-template-columns: repeat(8, 1fr);
+		font-weight: bold;
+		text-align: center;
+		margin-top: 2rem;
+		color: #444;
+	  }
+	  
+	  body.dark .calendar-legend {
+		color: #ddd;
+	  }
+	  
+	  .week-total {
+		background-color: rgba(76, 175, 80, 0.1);
+		font-weight: bold;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 0.9rem;
+	  }
+	  
+	  body.dark .week-total {
+		background-color: rgba(76, 175, 80, 0.15);
+		color: #aef4ae;
+	  }
+	  
   
 	  
 /* ✅ Responsive avancé */
