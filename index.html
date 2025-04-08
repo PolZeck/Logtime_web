@@ -33,6 +33,9 @@
     <button onclick="fetchLogtime()">Afficher</button>
   </div>
   <div id="results"></div>
+  <div id="calendar" style="margin-top: 2rem;"></div>
+
+</div>
   <script>
     function toggleTheme() {
       const body = document.body;
@@ -56,6 +59,22 @@
       document.getElementById("login").value = login;
       fetchLogtime();
     }
+
+	function generateCalendar(calendarData) {
+	  const calendarDiv = document.getElementById("calendar");
+	  calendarDiv.innerHTML = "<h4>🗓️ Logtime journalier ce mois</h4>";
+
+	  let html = '<div class="calendar-grid">';
+	  const daysInMonth = Object.keys(calendarData).length;
+
+	  for (let day = 1; day <= daysInMonth; day++) {
+		const log = calendarData[day] || "";
+		html += `<div class="calendar-day"><strong>${day}</strong><br>${log}</div>`;
+	  }
+
+	  html += "</div>";
+	  calendarDiv.innerHTML += html;
+	}
 
     async function fetchLogtime() {
       const login = document.getElementById("login").value;
@@ -84,6 +103,7 @@
 				</div>
 				<p>🎯 Objectif mensuel : ${data.monthly_goal_hours}h</p>
 			`;
+			generateCalendar(data.calendar);
 		}
       } catch (e) {
         results.innerHTML = "❌ Erreur de requête : " + e;

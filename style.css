@@ -175,7 +175,30 @@
 	line-height: 20px;
 	font-size: 0.9rem;
 	}
-
+	/* calendrier */
+	.calendar-container {
+		margin-top: 2rem;
+		text-align: center;
+	  }
+	  
+	  .calendar-grid {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 8px;
+		justify-items: center;
+	  }
+	  
+	  .calendar-day {
+		background: rgba(255, 255, 255, 0.15);
+		padding: 0.5rem;
+		border-radius: 6px;
+		min-height: 60px;
+		width: 100%;
+		text-align: center;
+		font-size: 0.85rem;
+		color: inherit;
+	  }
+	  
 /* ✅ Responsive avancé */
 @media (max-width: 768px) {
 	body {
