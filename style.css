@@ -177,47 +177,49 @@
 	}
 	/* calendrier */
 	.calendar-container {
-		max-width: 700px;
-		margin-left: auto;
-		margin-right: auto;
+		max-width: 720px;
+		margin: 0 auto;
+		width: 100%;
+		padding: 0 1rem;
 	  }
+	  
 	  
 	  
 	  .calendar-grid {
 		display: grid;
-		grid-template-columns: repeat(8, 1fr); /* 7 jours + 1 total */
+		grid-template-columns: repeat(8, 1fr); /* 7 jours + total */
 		gap: 8px;
 		justify-items: center;
 		margin-top: 1rem;
-		max-width: 100%;
 		width: 100%;
-		margin-left: auto;
-		margin-right: auto;
+		max-width: 100%;
+		padding: 0 0.5rem;
 		box-sizing: border-box;
 	  }
 	  
 	  
+	  
 	  .calendar-day {
-		background: rgba(255, 255, 255, 0.1);
-		padding: 0.5rem;
+		background-color: rgba(255, 255, 255, 0.06);
+		padding: 0.7rem 0.5rem;
 		border-radius: 6px;
-		min-height: 60px;
 		width: 100%;
+		box-sizing: border-box;
 		text-align: center;
 		font-size: 0.85rem;
-		color: inherit;
+		min-height: 60px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	  }
+	  
 	  
 	  .calendar-day.today {
-		outline: 2px solid #88d18a;
-		font-weight: bold;
-		background: rgba(120, 200, 140, 0.2);
+		outline: 2px solid #77e;
+		outline-offset: -2px;
+		background-color: rgba(255, 255, 255, 0.1);
 	  }
 	  
-	  .calendar-day.total {
-		background: rgba(200, 200, 200, 0.2);
-		font-weight: bold;
-	  }
 	  
 	  .calendar-day.empty {
 		background: transparent;
@@ -361,6 +363,25 @@
 	  font-size: 0.85rem;
 	  text-align: center;
 	}
+	
+	.calendar-grid {
+		grid-template-columns: repeat(4, 1fr); /* 3 jours + total */
+	  }
+	
+	  .calendar-legend {
+		grid-template-columns: repeat(4, 1fr);
+		font-size: 0.75rem;
+	  }
+	
+	  .calendar-day {
+		font-size: 0.75rem;
+		padding: 0.6rem 0.3rem;
+		min-height: 55px;
+	  }
+	
+	  .calendar-day.total {
+		font-size: 0.8rem;
+	  }
   }
   
   @media (max-width: 480px) {
