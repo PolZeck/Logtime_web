@@ -61,21 +61,65 @@
     }
 
 	function generateCalendar(calendarData) {
-		const calendarDiv = document.getElementById("calendar");
-		calendarDiv.className = "calendar-container";  // ⬅️ ajoute la classe pour appliquer les styles
-		calendarDiv.innerHTML = "<h4>🗓️ Logtime journalier ce mois</h4>";
+  const calendarDiv = document.getElementById("calendar");
+  calendarDiv.className = "calendar-container";
+  calendarDiv.innerHTML = "<h4>📅 Logtime journalier du mois</h4>";
 
-	  let html = '<div class="calendar-grid">';
-	  const daysInMonth = Object.keys(calendarData).length;
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth(); // 0-indexé
+  const today = now.getDate();
 
-	  for (let day = 1; day <= daysInMonth; day++) {
-		const log = calendarData[day] || "";
-		html += `<div class="calendar-day"><strong>${day}</strong><br>${log}</div>`;
-	  }
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const firstWeekday = firstDay.getDay() || 7; // lundi = 1
+  const totalDays = lastDay.getDate();
 
-	  html += "</div>";
-	  calendarDiv.innerHTML += html;
-	}
+  let html = '<div class="calendar-grid">';
+
+  let weekTotal = 0;
+  let currentWeekDay = 1;
+  let colCount = 0;
+
+  // 🕳 Cases vides si le mois ne commence pas un lundi
+  for (let i = 1; i < firstWeekday; i++) {
+    html += `<div class="calendar-day empty"></div>`;
+    colCount++;
+  }
+
+  for (let day = 1; day <= totalDays; day++) {
+    const log = calendarData[day] || "";
+    const isToday = day === today;
+    const display = log ? log : "-";
+    const minutes = parseInt(log?.split("h")[0] || 0) * 60 + parseInt(log?.split("h")[1]?.replace("min", "") || 0);
+
+    weekTotal += minutes;
+    colCount++;
+
+    html += `<div class="calendar-day${isToday ? ' today' : ''}">
+      <strong>${day}</strong><br>${display}
+    </div>`;
+
+    if (colCount === 7 || day === totalDays) {
+      if (colCount < 7) {
+        for (let j = colCount; j < 7; j++) {
+          html += `<div class="calendar-day empty"></div>`;
+        }
+      }
+
+      const hours = Math.floor(weekTotal / 60);
+      const mins = weekTotal % 60;
+      html += `<div class="calendar-day total"><strong>Total</strong><br>${hours}h ${mins}min</div>`;
+
+      colCount = 0;
+      weekTotal = 0;
+    }
+  }
+
+  html += "</div>";
+  calendarDiv.innerHTML += html;
+}
+
 
     async function fetchLogtime() {
       const login = document.getElementById("login").value;

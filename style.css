@@ -176,20 +176,16 @@
 	font-size: 0.9rem;
 	}
 	/* calendrier */
-	.calendar-container {
-		margin-top: 2rem;
-		text-align: center;
-	  }
-	  
-	  .calendar-grid {
+	.calendar-grid {
 		display: grid;
-		grid-template-columns: repeat(7, 1fr);
+		grid-template-columns: repeat(8, 1fr); /* 7 jours + 1 total */
 		gap: 8px;
 		justify-items: center;
+		margin-top: 1rem;
 	  }
 	  
 	  .calendar-day {
-		background: rgba(255, 255, 255, 0.15);
+		background: rgba(255, 255, 255, 0.1);
 		padding: 0.5rem;
 		border-radius: 6px;
 		min-height: 60px;
@@ -199,6 +195,23 @@
 		color: inherit;
 	  }
 	  
+	  .calendar-day.today {
+		outline: 2px solid #88d18a;
+		font-weight: bold;
+		background: rgba(120, 200, 140, 0.2);
+	  }
+	  
+	  .calendar-day.total {
+		background: rgba(200, 200, 200, 0.2);
+		font-weight: bold;
+	  }
+	  
+	  .calendar-day.empty {
+		background: transparent;
+		border: none;
+	  }
+	  
+	
 /* ✅ Responsive avancé */
 @media (max-width: 768px) {
 	body {
