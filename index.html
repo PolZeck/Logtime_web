@@ -63,22 +63,24 @@
 	function generateCalendar(calendarData) {
   const calendarDiv = document.getElementById("calendar");
   calendarDiv.className = "calendar-container";
-  html = `
-  <div class="calendar-title-container">
-    <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
-  </div>
-  <div class="calendar-legend">
-    <div>Lun</div>
-    <div>Mar</div>
-    <div>Mer</div>
-    <div>Jeu</div>
-    <div>Ven</div>
-    <div>Sam</div>
-    <div>Dim</div>
-    <div>Total</div>
-  </div>
-  <div class="calendar-grid">
+html = `
+  <div class="calendar-block">
+    <div class="calendar-title-container">
+      <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
+    </div>
+    <div class="calendar-legend">
+      <div>Lun</div>
+      <div>Mar</div>
+      <div>Mer</div>
+      <div>Jeu</div>
+      <div>Ven</div>
+      <div>Sam</div>
+      <div>Dim</div>
+      <div>Total</div>
+    </div>
+    <div class="calendar-grid">
 `;
+
 
 
 
@@ -135,7 +137,10 @@
     }
   }
 
-  html += "</div>";
+  html += `
+    </div>
+  </div>
+`;
 
   calendarDiv.innerHTML += html;
 
