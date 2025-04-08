@@ -110,8 +110,10 @@ html = `
     colCount++;
 
     html += `<div class="calendar-day${isToday ? ' today' : ''}">
-      <strong>${day}</strong><br>${display}
-    </div>`;
+		<div class="day-number">${day}</div>
+		<div class="logtime">${display}</div>
+	</div>`;
+
 
     // ⏹ Fin de semaine ou fin du mois
     if (colCount === 7 || day === totalDays) {
