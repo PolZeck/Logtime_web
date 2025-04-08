@@ -188,32 +188,34 @@
 
 	  .calendar-grid {
 		display: grid;
-		grid-template-columns: repeat(8, 1fr); /* 7 jours + total */
-		gap: 8px;
-		justify-items: center;
+		grid-template-columns: repeat(8, 1fr); /* 7 jours + 1 total */
+		gap: 4px;
+		margin-top: 1rem;
 		width: 100%;
 		max-width: 100%;
-		padding: 0 0.5rem;
-		box-sizing: border-box;
+		overflow-x: auto;
 	  }
+	  
 
 	  .calendar-day {
-		width: 100%;
-		min-width: 70px; /* 🔁 Ajoute une taille mini */
-		max-width: 100px; /* 🔁 Empêche que ça déborde */
+		border: 1px solid #999;
+		padding: 0.5rem;
+		text-align: center;
+		background-color: rgba(255, 255, 255, 0.05);
+		min-width: 60px;
 		aspect-ratio: 1 / 1;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between; /* pour séparer le jour et le log */
+		justify-content: center;
 		align-items: center;
+		font-size: 0.9rem;
 	  }
-	  
 	  
 	  .calendar-day.today {
-		outline: 2px solid #77e;
-		outline-offset: -2px;
-		background-color: rgba(255, 255, 255, 0.1);
+		background-color: rgba(255, 255, 255, 0.15);
+		font-weight: bold;
 	  }
+	  
 	  
 	  
 	  .calendar-day.empty {
@@ -233,6 +235,16 @@
 		padding: 0.7rem 0.5rem;
 		border-radius: 6px;
 		aspect-ratio: 1 / 1; /* 🆕 pour avoir la même hauteur */
+	  }
+	  
+	  .calendar-week-total {
+		font-weight: bold;
+		background-color: rgba(0, 128, 0, 0.15);
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.9rem;
 	  }
 	  
 	  
