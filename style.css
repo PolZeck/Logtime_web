@@ -210,8 +210,6 @@
 		justify-content: center;
 	  }
 	  
-	  
-	  
 	  .calendar-day.today {
 		outline: 2px solid #77e;
 		outline-offset: -2px;
@@ -228,6 +226,7 @@
 		background: rgba(255, 255, 255, 0.15);
 		font-weight: bold;
 		text-align: center;
+		min-height: 60px; 
 		grid-column: span 1;
 		border-left: 1px solid rgba(255, 255, 255, 0.05);
 	  }
@@ -417,7 +416,7 @@
 	  font-size: 1rem;
 	  padding: 0.4rem 0.6rem;
 	}
-	
+
 	.calendar-grid {
 		grid-template-columns: repeat(3, 1fr); /* compact encore + */
 	  }
