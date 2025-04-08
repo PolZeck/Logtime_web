@@ -68,7 +68,16 @@
     <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
   </div>
 `;
-html += `
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const today = now.getDate();
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const totalDays = lastDay.getDate();
+  html += `
     <div class="calendar-legend">
       <div>Lun</div>
       <div>Mar</div>
@@ -80,16 +89,6 @@ html += `
       <div>Total</div>
     </div>
   `;
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const today = now.getDate();
-
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const totalDays = lastDay.getDate();
-
   let html = '<div class="calendar-grid">';
   let weekTotal = 0;
   let dayOfWeek = firstDay.getDay(); // 0 (dimanche) à 6 (samedi)
@@ -136,6 +135,7 @@ html += `
   }
 
   html += "</div>";
+
   calendarDiv.innerHTML += html;
 
 }
