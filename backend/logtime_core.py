@@ -304,6 +304,23 @@ def get_logtime_report(login):
         "weekly_goal_hours": weekly_goal_hours
     }
 
+def get_monthly_logtime_breakdown(login):
+    sessions = get_logtime_data(login)
+    now = datetime.now(timezone.utc)
+    year, month = now.year, now.month
+
+    days_in_month = calendar.monthrange(year, month)[1]
+    breakdown = {}
+
+    for day in range(1, days_in_month + 1):
+        date = datetime(year, month, day, tzinfo=timezone.utc)
+        next_day = date + timedelta(days=1)
+        seconds = calculate_logtime(sessions, date, next_day, now, round_daily=True)
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        breakdown[day] = f"{hours}h {minutes}min" if seconds else ""
+    
+    return breakdown
 
 
 # --- Entrée dynamique ---
