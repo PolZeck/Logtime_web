@@ -63,11 +63,24 @@
 	function generateCalendar(calendarData) {
   const calendarDiv = document.getElementById("calendar");
   calendarDiv.className = "calendar-container";
-  calendarDiv.innerHTML = `
+  html = `
   <div class="calendar-title-container">
     <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
   </div>
+  <div class="calendar-legend">
+    <div>Lun</div>
+    <div>Mar</div>
+    <div>Mer</div>
+    <div>Jeu</div>
+    <div>Ven</div>
+    <div>Sam</div>
+    <div>Dim</div>
+    <div>Total</div>
+  </div>
+  <div class="calendar-grid">
 `;
+
+
 
   const now = new Date();
   const year = now.getFullYear();
@@ -77,19 +90,7 @@
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const totalDays = lastDay.getDate();
-  html += `
-    <div class="calendar-legend">
-      <div>Lun</div>
-      <div>Mar</div>
-      <div>Mer</div>
-      <div>Jeu</div>
-      <div>Ven</div>
-      <div>Sam</div>
-      <div>Dim</div>
-      <div>Total</div>
-    </div>
-  `;
-  let html = '<div class="calendar-grid">';
+	html += '<div class="calendar-grid">';
   let weekTotal = 0;
   let dayOfWeek = firstDay.getDay(); // 0 (dimanche) à 6 (samedi)
   if (dayOfWeek === 0) dayOfWeek = 7; // on fait commencer lundi = 1
