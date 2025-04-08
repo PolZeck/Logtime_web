@@ -176,7 +176,12 @@
 	font-size: 0.9rem;
 	}
 	/* calendrier */
-	.calendar-grid {
+	.calendar-container {
+		margin-top: 2rem;
+		text-align: center;
+	  }
+	  
+	  .calendar-grid {
 		display: grid;
 		grid-template-columns: repeat(8, 1fr); /* 7 jours + 1 total */
 		gap: 8px;
@@ -211,7 +216,6 @@
 		border: none;
 	  }
 	  
-	
 /* ✅ Responsive avancé */
 @media (max-width: 768px) {
 	body {
