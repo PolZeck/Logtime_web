@@ -1,5 +1,4 @@
 
-
 * {
 	box-sizing: border-box;
 	}
@@ -183,12 +182,14 @@
 		width: 100%;
 		padding: 0 0.5rem;
 	  }
+	  
 
 	  .calendar-grid {
 		display: grid;
 		grid-template-columns: repeat(8, 1fr); /* 7 jours + total */
 		gap: 8px;
 		justify-items: center;
+		margin-top: 1rem;
 		width: 100%;
 		max-width: 100%;
 		padding: 0 0.5rem;
@@ -222,10 +223,10 @@
 	  }
 
 	  .calendar-day.total.week-total {
-		margin: 0;
 		background: rgba(255, 255, 255, 0.15);
 		font-weight: bold;
 		text-align: center;
+		margin: 0;
 		grid-column: span 1;
 		border-left: 1px solid rgba(255, 255, 255, 0.05);
 	  }
