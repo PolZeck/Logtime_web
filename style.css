@@ -235,22 +235,24 @@
 	  }
 	  
 	  /* Amélioration des colonnes de totaux hebdomadaires */
-	.week-total {
+	  .week-total {
 		grid-column: span 7;
-		background-color: rgba(76, 175, 80, 0.1); /* Vert pâle */
-		border-top: 1px solid rgba(0, 0, 0, 0.1);
+		background-color: rgba(180, 220, 180, 0.2);
 		font-weight: bold;
 		text-align: right;
 		padding: 6px 10px;
 		margin-top: 4px;
 		font-size: 0.9rem;
 		color: #333;
-	}
-	
-	body.dark .week-total {
+		border-left: 2px dashed #88d18a;
+		border-radius: 5px;
+	  }
+	  
+	  body.dark .week-total {
 		background-color: rgba(255, 255, 255, 0.05);
-		color: #eee;
-	}
+		color: #aef4ae;
+	  }
+	  
 	.calendar-legend {
 		display: grid;
 		grid-template-columns: repeat(8, 1fr);
