@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -63,22 +64,10 @@
 	function generateCalendar(calendarData) {
   const calendarDiv = document.getElementById("calendar");
   calendarDiv.className = "calendar-container";
-html = `
-  <div class="calendar-block">
-    <div class="calendar-title-container">
-      <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
-    </div>
-    <div class="calendar-legend">
-      <div>Lun</div>
-      <div>Mar</div>
-      <div>Mer</div>
-      <div>Jeu</div>
-      <div>Ven</div>
-      <div>Sam</div>
-      <div>Dim</div>
-      <div>Total</div>
-    </div>
-    <div class="calendar-grid">
+  calendarDiv.innerHTML = `
+  <div class="calendar-title-container">
+    <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
+  </div>
 `;
 
   const now = new Date();
@@ -89,6 +78,8 @@ html = `
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const totalDays = lastDay.getDate();
+
+  let html = '<div class="calendar-grid">';
   let weekTotal = 0;
   let dayOfWeek = firstDay.getDay(); // 0 (dimanche) à 6 (samedi)
   if (dayOfWeek === 0) dayOfWeek = 7; // on fait commencer lundi = 1
@@ -110,10 +101,8 @@ html = `
     colCount++;
 
     html += `<div class="calendar-day${isToday ? ' today' : ''}">
-		<div class="day-number">${day}</div>
-		<div class="logtime">${display}</div>
-	</div>`;
-
+      <strong>${day}</strong><br>${display}
+    </div>`;
 
     // ⏹ Fin de semaine ou fin du mois
     if (colCount === 7 || day === totalDays) {
@@ -135,11 +124,19 @@ html = `
     }
   }
 
+  html += "</div>";
   html += `
+    <div class="calendar-legend">
+      <div>Lun</div>
+      <div>Mar</div>
+      <div>Mer</div>
+      <div>Jeu</div>
+      <div>Ven</div>
+      <div>Sam</div>
+      <div>Dim</div>
+      <div>Total</div>
     </div>
-  </div>
-`;
-
+  `;
   calendarDiv.innerHTML += html;
 
 }

@@ -1,5 +1,6 @@
 
-    * {
+
+* {
 	box-sizing: border-box;
 	}
 
@@ -177,45 +178,42 @@
 	}
 	/* calendrier */
 	.calendar-container {
-		max-width: 100%;
-		width: 100%;
+		max-width: 95vw;   /* ✅ au lieu de 720px */
 		margin: 0 auto;
-		padding: 0 1rem;
-		overflow-x: auto;
+		width: 100%;
+		padding: 0 0.5rem;
 	  }
-	  
-	  
 
 	  .calendar-grid {
 		display: grid;
-		grid-template-columns: repeat(8, 1fr); /* 7 jours + 1 total */
-		gap: 4px;
-		margin-top: 1rem;
+		grid-template-columns: repeat(8, 1fr); /* 7 jours + total */
+		gap: 8px;
+		justify-items: center;
 		width: 100%;
 		max-width: 100%;
-		overflow-x: auto;
+		padding: 0 0.5rem;
+		box-sizing: border-box;
 	  }
-	  
 
 	  .calendar-day {
-		border: 1px solid #999;
-		padding: 0.5rem;
+		background-color: rgba(255, 255, 255, 0.06);
+		padding: 0.7rem 0.5rem;
+		border-radius: 6px;
+		width: 100%;
+		box-sizing: border-box;
 		text-align: center;
-		background-color: rgba(255, 255, 255, 0.05);
-		min-width: 60px;
-		aspect-ratio: 1 / 1;
+		font-size: 0.85rem;
+		min-height: 60px;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		align-items: center;
-		font-size: 0.9rem;
 	  }
 	  
 	  .calendar-day.today {
-		background-color: rgba(255, 255, 255, 0.15);
-		font-weight: bold;
+		outline: 2px solid #77e;
+		outline-offset: -2px;
+		background-color: rgba(255, 255, 255, 0.1);
 	  }
-	  
 	  
 	  
 	  .calendar-day.empty {
@@ -223,31 +221,14 @@
 		border: none;
 	  }
 
-	  /* .calendar-day.total.week-total {
+	  .calendar-day.total.week-total {
+		margin: 0;
 		background: rgba(255, 255, 255, 0.15);
 		font-weight: bold;
 		text-align: center;
-		border: 1px solid #999;
+		grid-column: span 1;
 		border-left: 1px solid rgba(255, 255, 255, 0.05);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
-		padding: 0.7rem 0.5rem;
-		border-radius: 6px;
-		aspect-ratio: 1 / 1; /* 🆕 pour avoir la même hauteur */
-	  } */
-
-	  .calendar-week-total {
-		font-weight: bold;
-		background-color: rgba(0, 128, 0, 0.15);
-		text-align: center;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 0.9rem;
 	  }
-	  
 	  
 	  body.dark .calendar-day.total.week-total {
 		background: rgba(255, 255, 255, 0.07);
@@ -298,16 +279,14 @@
 		color: #aef4ae;
 	  }
 	  
-	  .calendar-legend {
+	.calendar-legend {
 		display: grid;
 		grid-template-columns: repeat(8, 1fr);
 		font-weight: bold;
 		text-align: center;
-		margin-bottom: 1rem;
+		margin-top: 2rem;
 		color: #444;
-		max-width: 100%;
 	  }
-	  
 	  
 	  body.dark .calendar-legend {
 		color: #ddd;
@@ -326,16 +305,6 @@
 		background-color: rgba(76, 175, 80, 0.15);
 		color: #aef4ae;
 	  }
-	  .day-number {
-		font-weight: bold;
-		font-size: 1rem;
-		margin-bottom: 0.3rem;
-	  }
-	  
-	  .logtime {
-		font-size: 0.85rem;
-	  }
-	  
 	  
   
 	  
