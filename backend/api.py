@@ -25,17 +25,16 @@ def logtime():
 
 
         return jsonify({
-    "today": report["today"],
-    "week": report["week"],
-    "month": report["month"],
-    "remaining_week": report["remaining_week"],
-    "remaining_month": report["remaining_month"],
-    "month_raw": report["month_raw"],
-    "monthly_goal_hours": report["monthly_goal_hours"],
-    "weekly_goal_hours": report["weekly_goal_hours"],
-    "calendar": calendar_data  # ✅ Ajouté ici
-})
-
+            "today": report["today"],
+            "week": report["week"],
+            "month": report["month"],
+            "remaining_week": remaining_week,  # ⬅️ corrigé
+            "remaining_month": remaining_month,
+            "month_raw": report["month_raw"],
+            "monthly_goal_hours": monthly_goal_hours,
+            "weekly_goal_hours": int(weekly_goal_sec // 3600),
+            "calendar": calendar_data  # 👈 on ajoute le calendrier ici
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
