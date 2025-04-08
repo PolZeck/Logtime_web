@@ -182,9 +182,7 @@
 		width: 100%;
 		padding: 0 1rem;
 	  }
-	  
-	  
-	  
+
 	  .calendar-grid {
 		display: grid;
 		grid-template-columns: repeat(8, 1fr); /* 7 jours + total */
@@ -196,9 +194,7 @@
 		padding: 0 0.5rem;
 		box-sizing: border-box;
 	  }
-	  
-	  
-	  
+
 	  .calendar-day {
 		background-color: rgba(255, 255, 255, 0.06);
 		padding: 0.7rem 0.5rem;
@@ -213,6 +209,9 @@
 		justify-content: center;
 	  }
 	  
+	  .calendar-container h4{
+		justify-content: center;
+	  }
 	  
 	  .calendar-day.today {
 		outline: 2px solid #77e;
@@ -363,7 +362,7 @@
 	  font-size: 0.85rem;
 	  text-align: center;
 	}
-	
+
 	.calendar-grid {
 		grid-template-columns: repeat(4, 1fr); /* 3 jours + total */
 	  }
