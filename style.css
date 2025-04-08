@@ -285,7 +285,8 @@
 		grid-template-columns: repeat(8, 1fr);
 		font-weight: bold;
 		text-align: center;
-		margin-top: 2rem;
+		margin-top: 1rem;
+		margin-bottom: 2rem;
 		color: #444;
 	  }
 	  
