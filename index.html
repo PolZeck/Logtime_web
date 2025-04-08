@@ -67,25 +67,24 @@
 
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth(); // 0-indexé
+  const month = now.getMonth();
   const today = now.getDate();
 
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
-  const firstWeekday = firstDay.getDay() || 7; // lundi = 1
   const totalDays = lastDay.getDate();
 
   let html = '<div class="calendar-grid">';
-
   let weekTotal = 0;
-  let currentWeekDay = 1;
-  let colCount = 0;
+  let dayOfWeek = firstDay.getDay(); // 0 (dimanche) à 6 (samedi)
+  if (dayOfWeek === 0) dayOfWeek = 7; // on fait commencer lundi = 1
 
-  // 🕳 Cases vides si le mois ne commence pas un lundi
-  for (let i = 1; i < firstWeekday; i++) {
+  // 🕳 Cases vides avant le premier jour (lundi = 1)
+  for (let i = 1; i < dayOfWeek; i++) {
     html += `<div class="calendar-day empty"></div>`;
-    colCount++;
   }
+
+  let colCount = dayOfWeek - 1;
 
   for (let day = 1; day <= totalDays; day++) {
     const log = calendarData[day] || "";
@@ -100,6 +99,7 @@
       <strong>${day}</strong><br>${display}
     </div>`;
 
+    // ⏹ Fin de semaine ou fin du mois
     if (colCount === 7 || day === totalDays) {
       if (colCount < 7) {
         for (let j = colCount; j < 7; j++) {
@@ -109,7 +109,10 @@
 
       const hours = Math.floor(weekTotal / 60);
       const mins = weekTotal % 60;
-      html += `<div class="calendar-day total"><strong>Total</strong><br>${hours}h ${mins}min</div>`;
+
+      html += `<div class="calendar-day total week-total">
+        🧮 <strong>${hours}h ${mins}min</strong>
+      </div>`;
 
       colCount = 0;
       weekTotal = 0;
@@ -119,6 +122,7 @@
   html += "</div>";
   calendarDiv.innerHTML += html;
 }
+
 
 
     async function fetchLogtime() {

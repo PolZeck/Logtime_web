@@ -215,6 +215,25 @@
 		background: transparent;
 		border: none;
 	  }
+
+	  .calendar-day.total.week-total {
+		background: rgba(255, 255, 255, 0.15);
+		font-weight: bold;
+		text-align: center;
+		grid-column: span 1;
+		border-left: 1px solid rgba(255, 255, 255, 0.05);
+	  }
+	  
+	  body.dark .calendar-day.total.week-total {
+		background: rgba(255, 255, 255, 0.07);
+		color: #eee;
+	  }
+	  
+	  body.light .calendar-day.total.week-total {
+		background: rgba(0, 0, 0, 0.07);
+		color: #222;
+	  }
+	  
 	  /* Amélioration des colonnes de totaux hebdomadaires */
 	.week-total {
 		grid-column: span 7;
