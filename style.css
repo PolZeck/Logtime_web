@@ -223,10 +223,11 @@
 		border: none;
 	  }
 
-	  .calendar-day.total.week-total {
+	  /* .calendar-day.total.week-total {
 		background: rgba(255, 255, 255, 0.15);
 		font-weight: bold;
 		text-align: center;
+		border: 1px solid #999;
 		border-left: 1px solid rgba(255, 255, 255, 0.05);
 		display: flex;
 		justify-content: center;
@@ -235,8 +236,8 @@
 		padding: 0.7rem 0.5rem;
 		border-radius: 6px;
 		aspect-ratio: 1 / 1; /* 🆕 pour avoir la même hauteur */
-	  }
-	  
+	  } */
+
 	  .calendar-week-total {
 		font-weight: bold;
 		background-color: rgba(0, 128, 0, 0.15);
