@@ -61,8 +61,9 @@
     }
 
 	function generateCalendar(calendarData) {
-	  const calendarDiv = document.getElementById("calendar");
-	  calendarDiv.innerHTML = "<h4>🗓️ Logtime journalier ce mois</h4>";
+		const calendarDiv = document.getElementById("calendar");
+		calendarDiv.className = "calendar-container";  // ⬅️ ajoute la classe pour appliquer les styles
+		calendarDiv.innerHTML = "<h4>🗓️ Logtime journalier ce mois</h4>";
 
 	  let html = '<div class="calendar-grid">';
 	  const daysInMonth = Object.keys(calendarData).length;
