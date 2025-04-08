@@ -68,6 +68,18 @@
     <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
   </div>
 `;
+html += `
+    <div class="calendar-legend">
+      <div>Lun</div>
+      <div>Mar</div>
+      <div>Mer</div>
+      <div>Jeu</div>
+      <div>Ven</div>
+      <div>Sam</div>
+      <div>Dim</div>
+      <div>Total</div>
+    </div>
+  `;
 
   const now = new Date();
   const year = now.getFullYear();
@@ -124,18 +136,6 @@
   }
 
   html += "</div>";
-  html += `
-    <div class="calendar-legend">
-      <div>Lun</div>
-      <div>Mar</div>
-      <div>Mer</div>
-      <div>Jeu</div>
-      <div>Ven</div>
-      <div>Sam</div>
-      <div>Dim</div>
-      <div>Total</div>
-    </div>
-  `;
   calendarDiv.innerHTML += html;
 
 }
