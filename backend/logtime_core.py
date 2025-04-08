@@ -322,7 +322,6 @@ def get_monthly_logtime_breakdown(login):
     
     return breakdown
 
-
 # --- Entrée dynamique ---
 def get_logtime_report_for(login):
     return get_logtime_report(login)
