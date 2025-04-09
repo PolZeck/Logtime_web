@@ -118,7 +118,13 @@
     const log = calendarData[day] || "";
     const isToday = day === today;
     const display = log ? log : "-";
-    const minutes = parseInt(log?.split("h")[0] || 0) * 60 + parseInt(log?.split("h")[1]?.replace("min", "") || 0);
+	let minutes = 0;
+	if (log && log.includes("h")) {
+	const parts = log.split("h");
+	const h = parseInt(parts[0]) || 0;
+	const m = parseInt(parts[1]?.replace("min", "") || 0);
+	minutes = h * 60 + m;
+	}
 
     weekTotal += minutes;
     colCount++;
