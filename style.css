@@ -314,7 +314,7 @@
 /* ✅ Responsive avancé */
 @media (max-width: 768px) {
 	body {
-	  padding: 1rem;
+	  padding: 2rem;
 	  font-size: 16px;
 	}
   
