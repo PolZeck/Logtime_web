@@ -148,6 +148,7 @@
 		background-color: rgba(30, 30, 30, 0.6); /* doux + transparent */
 		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 		backdrop-filter: blur(6px);
+		box-sizing: border-box;
 	  }
 	  
 
@@ -352,10 +353,15 @@
 	}
   
 	#results {
-	  padding: 1rem;
-	  font-size: 1rem;
-	  text-align: center;
-	}
+		width: 95%;
+		max-width: 95%;
+		margin: 1rem auto 5rem auto;
+		padding: 1.2rem 1rem;
+		border-radius: 12px;
+		font-size: 0.95rem;
+		box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+	  }
+	  
   
 	.progress-container {
 	  height: 24px;
