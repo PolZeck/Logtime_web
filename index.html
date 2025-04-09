@@ -168,8 +168,9 @@
 
     async function fetchLogtime() {
       const login = document.getElementById("login").value;
-      const results = document.getElementById("results");
-      results.innerHTML = "⏳ Chargement...";
+	  const summary = document.getElementById("summary-view");
+	  summary.innerHTML = "⏳ Chargement...";
+
 
       try {
         const res = await fetch(`https://logtime-web.onrender.com/logtime?login=${login}`);
@@ -196,7 +197,7 @@
 			generateCalendar(data.monthly_breakdown);
 		}
       } catch (e) {
-        results.innerHTML = "❌ Erreur de requête : " + e;
+        summary.innerHTML = "❌ Erreur de requête : " + e;
       }
     }
   </script>
