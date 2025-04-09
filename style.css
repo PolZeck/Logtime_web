@@ -156,7 +156,8 @@
 	}
 
 	body.light #results {
-		padding: 0.5rem;
+		padding: 1rem;
+
 		background-color: rgba(255, 255, 255, 0.8);
 		color: #222;
 	  }
@@ -409,7 +410,11 @@
 	.favorites button {
 	  flex: 1 1 100%;
 	}
-  
+	
+	#results{
+		margin-bottom: 3rem;
+	}
+
 	h2 {
 	  font-size: 1.1rem;
 	}
