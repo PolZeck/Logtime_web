@@ -32,6 +32,7 @@
 		animation: gradientRoseGreen 7s ease infinite;
 		color: #222;
 		transition: background 2s ease-in-out, color 1.5s ease;
+		padding: 2rem;
 	}
 	
 	body.light {
