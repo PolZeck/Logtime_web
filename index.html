@@ -39,7 +39,6 @@
   </div>
   <div id="calendar" style="display: none;"></div>
 
-</div>
   <script>
     function toggleTheme() {
       const body = document.body;
@@ -183,7 +182,7 @@
         const data = await res.json();
 
         if (data.error) {
-          results.innerHTML = "❌ Erreur : " + data.error;
+          summary.innerHTML = "❌ Erreur : " + data.error;
 		} else {
 			const monthlyGoalSeconds = data.monthly_goal_hours * 3600.0;
 			const percent = Math.min(100, Math.round((data.month_raw / monthlyGoalSeconds) * 100));
