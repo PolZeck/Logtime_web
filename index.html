@@ -31,9 +31,13 @@
   <div style="text-align:center;">
     <input type="text" id="login" placeholder="ex: pledieu">
     <button onclick="fetchLogtime()">Afficher</button>
+	<button onclick="toggleView()" id="toggleViewBtn">Voir le calendrier 🗓️</button>
   </div>
-  <div id="results"></div>
-  <div id="calendar" style="padding-bottom: 2rem;"></div>
+  <div id="results-container">
+	<div id="summary-view" style="display: block;"></div>
+	<div id="calendar-view" style="display: none;"></div>
+  </div>
+  <div id="calendar" style="display: none;"></div>
 
 </div>
   <script>
@@ -45,6 +49,26 @@
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       document.querySelector('.toggle-theme').textContent = isDark ? '🌙' : '☀️';
     }
+
+	let currentView = 'summary';
+
+	function toggleView() {
+	const summary = document.getElementById("results");
+	const calendar = document.getElementById("calendar");
+	const toggleBtn = document.getElementById("toggleViewBtn");
+
+	if (currentView === 'summary') {
+		summary.style.display = "none";
+		calendar.style.display = "block";
+		toggleBtn.textContent = "Voir le résumé 📋";
+		currentView = 'calendar';
+	} else {
+		summary.style.display = "block";
+		calendar.style.display = "none";
+		toggleBtn.textContent = "Voir le calendrier 🗓️";
+		currentView = 'summary';
+	}
+	}
 
     (function () {
       const saved = localStorage.getItem('theme');
@@ -158,18 +182,18 @@
 			const percent = Math.min(100, Math.round((data.month_raw / monthlyGoalSeconds) * 100));
 			const weeklyGoal = data.weekly_goal_hours;
 
-			results.innerHTML = `
-				<h3>📊 Résultat pour <strong>${login}</strong></h3>
-				<p>📅 Aujourd'hui : ${data.today}</p>
-				<p>📆 Cette semaine : ${data.week} <br><small>⏳ Reste : ${data.remaining_week} | 🎯 Objectif : ${weeklyGoal}h</small></p>
-				<p>🗓️ Ce mois : ${data.month} <br><small>⏳ Reste : ${data.remaining_month}</small></p>
+			document.getElementById("summary-view").innerHTML = `
+			<h3>📊 Résultat pour <strong>${login}</strong></h3>
+			<p>📅 Aujourd'hui : ${data.today}</p>
+			<p>📆 Cette semaine : ${data.week} <br><small>⏳ Reste : ${data.remaining_week} | 🎯 Objectif : ${weeklyGoal}h</small></p>
+			<p>🗓️ Ce mois : ${data.month} <br><small>⏳ Reste : ${data.remaining_month}</small></p>
 
-				<div class="progress-container">
+			<div class="progress-container">
 				<div class="progress-bar" style="width:${percent}%;">${percent}%</div>
-				</div>
-				<p>🎯 Objectif mensuel : ${data.monthly_goal_hours}h</p>
+			</div>
+			<p>🎯 Objectif mensuel : ${data.monthly_goal_hours}h</p>
 			`;
-			generateCalendar(data.calendar);
+			generateCalendar(data.monthly_breakdown);
 		}
       } catch (e) {
         results.innerHTML = "❌ Erreur de requête : " + e;
