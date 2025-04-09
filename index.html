@@ -33,6 +33,10 @@
     <input type="text" id="login" placeholder="ex: pledieu">
     <button onclick="fetchLogtime()">Afficher</button>
   </div>
+  <div style="text-align: center;">
+	<button onclick="toggleView()" style="margin-top: 1rem;">🎛️ Basculer Résumé / Calendrier</button>
+  </div>
+  
   <div id="results"></div>
   <div id="calendar" style="padding-bottom: 2rem;"></div>
 
@@ -176,6 +180,24 @@
         results.innerHTML = "❌ Erreur de requête : " + e;
       }
     }
+	function toggleView() {
+  const results = document.getElementById("results");
+  const calendar = document.getElementById("calendar");
+
+  if (results.style.display === "none") {
+    results.style.display = "block";
+    calendar.style.display = "none";
+  } else {
+    results.style.display = "none";
+    calendar.style.display = "block";
+  }
+}
+
+// Optionnel : cacher le calendrier par défaut
+window.onload = () => {
+  document.getElementById("calendar").style.display = "none";
+};
+
   </script>
 </body>
 </html>
