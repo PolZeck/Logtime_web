@@ -11,26 +11,29 @@ def logtime():
     login = request.args.get("login")
     if not login:
         return jsonify({"error": "Login manquant"}), 400
-
+    print(f"Requête reçue pour le login : {login}")
     try:
         report = get_logtime_report_for(login)
-        breakdown = get_monthly_logtime_breakdown(login)  # 💡 AJOUT ICI
-
+        
+        # 🔁 Corrigé ici : ajout de login en premier argument
         remaining_week, remaining_month, monthly_goal_sec, weekly_goal_sec = calculate_remaining_times(
             login, report["now"], report["week_raw"], report["month_raw"]
         )
+
         monthly_goal_hours = int(monthly_goal_sec // 3600)
+        calendar_data = get_monthly_logtime_breakdown(login)
+
 
         return jsonify({
             "today": report["today"],
             "week": report["week"],
             "month": report["month"],
-            "remaining_week": report["remaining_week"],
-            "remaining_month": report["remaining_month"],
+            "remaining_week": remaining_week,  # ⬅️ corrigé
+            "remaining_month": remaining_month,
             "month_raw": report["month_raw"],
-            "monthly_goal_hours": report["monthly_goal_hours"],
-            "weekly_goal_hours": report["weekly_goal_hours"],
-            "monthly_breakdown": breakdown  # ✅ AJOUT ICI POUR LE CALENDRIER
+            "monthly_goal_hours": monthly_goal_hours,
+            "weekly_goal_hours": int(weekly_goal_sec // 3600),
+            "calendar": calendar_data  # 👈 on ajoute le calendrier ici
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
