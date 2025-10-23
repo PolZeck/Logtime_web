@@ -8,7 +8,7 @@ load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-USER_LOGIN = "pledieu"  # sera modifié dynamiquement par get_logtime_report_for()
+USER_LOGIN = "PROUT"  # sera modifié dynamiquement par get_logtime_report_for()
 
 # --- API 42 ---
 def get_access_token():
