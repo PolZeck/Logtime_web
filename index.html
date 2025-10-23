@@ -1,47 +1,57 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Logtime 42</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Petits styles de secours si style.css est vide/absent */
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial; margin: 0; padding: 2rem; background:#222; color:#eee; }
+    .dark { background:#222; color:#eee; } .light { background:#f4f4f4; color:#111; }
+    h2 { text-align:center; font-family: Orbitron, sans-serif; letter-spacing: .5px; }
+    .toggle-theme { position:fixed; top:14px; right:16px; cursor:pointer; user-select:none; }
+    .panel { max-width:900px; margin: 1rem auto; padding:1rem; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); }
+    .progress-container { width:100%; background:#444; border-radius:10px; overflow:hidden; height:22px; margin:.5rem 0; }
+    .progress-bar { height:100%; background:linear-gradient(90deg,#4ade80,#22c55e); color:#000; font-weight:700; text-align:center; line-height:22px; }
+    .calendar-title-container { text-align:center; margin:1rem 0 .5rem }
+    .calendar-title { margin:0 }
+    .calendar-container { max-width:900px; margin: 0 auto; }
+    .calendar-grid { display:grid; grid-template-columns: repeat(8, 1fr); gap:6px; }
+    .calendar-legend { display:grid; grid-template-columns:repeat(8,1fr); gap:6px; margin-top:.5rem; opacity:.8; font-size:.9rem; }
+    .calendar-day { padding:.5rem; border-radius:10px; background:#333; min-height:54px; text-align:center; display:flex; flex-direction:column; justify-content:center; }
+    .calendar-day.today { outline:2px solid #60a5fa; background:#1f2937; }
+    .calendar-day.empty { background:transparent; border:1px dashed #444; }
+    .calendar-day.total { background:#1f3d2b; border:1px solid #2e7d32; }
+    .error { color:#fca5a5; }
+    .muted { opacity:.8; font-size:.95rem; }
+    .row { display:flex; gap:1rem; flex-wrap:wrap; }
+    .chip { background:#444; padding:.25rem .5rem; border-radius:999px; }
+    button { background:#4b9465; color:#fff; border:none; padding:.6rem .9rem; border-radius:8px; cursor:pointer; }
+    button:hover { filter:brightness(1.05); }
+  </style>
 </head>
 <body class="dark">
   <div class="toggle-theme" onclick="toggleTheme()">🌙</div>
   <h2>🔎 Logtime 42 🔎</h2>
-  <div class="favorites">
-	<strong>⭐ Favoris :</strong><br>
-	<select onchange="selectLogin(this.value)">
-	  <option value="">-- Choisir un favori --</option>
-	  <option value="pledieu">pledieu</option>
-	  <option value="lcosson">lcosson</option>
-	  <option value="abouclie">abouclie</option>
-	</select>
-	<br><br>
-	<strong>🤟 Inutiles❗ :</strong><br>
-	<select onchange="selectLogin(this.value)">
-	  <option value="">-- Choisir un PROUT --</option>
-	  <option value="yalaatik">yalaatik</option>
-	  <option value="vdurand">vdurand</option>
-	  <option value="arocca">arocca</option>
-	</select>
-  </div>
-  
-  <div style="text-align:center;">
-    <input type="text" id="login" placeholder="ex: pledieu">
-    <button onclick="fetchLogtime()">Afficher</button>
-  </div>
-  <div style="text-align: center;">
-	<button onclick="toggleView()" style="margin-top: 1rem;">🎛️ Basculer Résumé / Calendrier</button>
-  </div>
-  
-  <div id="results"></div>
-  <div id="calendar" style="padding-bottom: 2rem;"></div>
 
-</div>
+  <div class="panel" style="text-align:center">
+    <!-- plus de sélection d'utilisateur : c'est ton sheet perso -->
+    <button onclick="toggleView()" style="margin-bottom: .5rem;">🎛️ Basculer Résumé / Calendrier</button>
+    <div id="results" class="muted">⏳ Chargement…</div>
+  </div>
+
+  <div id="calendar" class="panel" style="padding-bottom:2rem; display:none;"></div>
+
   <script>
+    // ========= CONFIG =========
+    const SHEET_CSV_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPQeAGAWJrpnDLjyB2Xzl3qvJPYkK805vbWX-8vXJprO06mvwdXVKOa2jsvGwDkL0IxXvO4YTy4r5F/pub?gid=0&single=true&output=csv";
+    const MONTHLY_GOAL_HOURS = 140; // 🎯 objectif mois
+    const WEEKLY_GOAL_HOURS  = 35;  // 🎯 objectif semaine
+
+    // ========= THEME =========
     function toggleTheme() {
       const body = document.body;
       body.classList.toggle('dark');
@@ -50,7 +60,6 @@
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       document.querySelector('.toggle-theme').textContent = isDark ? '🌙' : '☀️';
     }
-
     (function () {
       const saved = localStorage.getItem('theme');
       if (saved === 'light') {
@@ -60,144 +69,203 @@
       }
     })();
 
-    function selectLogin(login) {
-      document.getElementById("login").value = login;
-      fetchLogtime();
+    // ========= HELPERS =========
+    const pad = n => String(n).padStart(2, '0');
+    const minutesToStr = (m) => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
+    const strToMinutes = (hhmm) => {
+      if (!hhmm || !/^\d{1,2}:\d{2}$/.test(hhmm.trim())) return 0;
+      const [h,m] = hhmm.trim().split(":").map(Number);
+      return (h*60 + m) | 0;
+    };
+    const parseFRDate = (s) => {
+      // "DD/MM/YYYY" -> Date (local)
+      const [d,m,y] = s.split("/").map(Number);
+      return new Date(y, m-1, d);
+    };
+    const sameYMD = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+
+    function getWeekBounds(date) {
+      // Lundi..Dimanche
+      const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const day = (d.getDay() + 6) % 7; // 0=lundi, 6=dimanche
+      const monday = new Date(d); monday.setDate(d.getDate() - day);
+      const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+      return { monday, sunday };
     }
 
-	function generateCalendar(calendarData) {
-  const calendarDiv = document.getElementById("calendar");
-  calendarDiv.className = "calendar-container";
-  calendarDiv.innerHTML = `
-  <div class="calendar-title-container">
-    <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
-  </div>
-`;
+    // ========= CSV FETCH & BUILD =========
+    async function fetchCSV(url) {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.text();
+    }
 
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const today = now.getDate();
+    function parseCSV(text) {
+      // Simple parse: split lines, then commas (ton sheet n'a pas de virgules dans les cellules A/B)
+      const lines = text.trim().split(/\r?\n/);
+      // Cherche entêtes "DATE" / "Logtime" si présents :
+      let startIdx = 0;
+      if (lines[0].toLowerCase().includes("date") && lines[0].toLowerCase().includes("logtime")) {
+        startIdx = 1;
+      }
+      const rows = [];
+      for (let i = startIdx; i < lines.length; i++) {
+        const cols = lines[i].split(",");
+        const date = (cols[0] || "").trim();
+        const log  = (cols[1] || "").trim();
+        if (!date) continue;
+        rows.push({ date, log });
+      }
+      return rows;
+    }
 
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const totalDays = lastDay.getDate();
+    function aggregate(rows) {
+      // Map par date -> minutes
+      const map = new Map();
+      rows.forEach(r => {
+        const mins = strToMinutes(r.log);
+        if (mins > 0) map.set(r.date, mins);
+      });
 
-  let html = '<div class="calendar-grid">';
-  let weekTotal = 0;
-  let dayOfWeek = firstDay.getDay(); // 0 (dimanche) à 6 (samedi)
-  if (dayOfWeek === 0) dayOfWeek = 7; // on fait commencer lundi = 1
+      const now = new Date();
+      const { monday, sunday } = getWeekBounds(now);
 
-  // 🕳 Cases vides avant le premier jour (lundi = 1)
-  for (let i = 1; i < dayOfWeek; i++) {
-    html += `<div class="calendar-day empty"></div>`;
-  }
+      let todayMin = 0, weekMin = 0, monthMin = 0;
+      // Pour calendrier : index par jour du mois courant
+      const cal = {}; // { [dayNumber]: "XhYmin" }
 
-  let colCount = dayOfWeek - 1;
+      map.forEach((mins, k) => {
+        const d = parseFRDate(k);
+        if (isNaN(d)) return;
 
-  for (let day = 1; day <= totalDays; day++) {
-    const log = calendarData[day] || "";
-    const isToday = day === today;
-    const display = log ? log : "-";
-    const minutes = parseInt(log?.split("h")[0] || 0) * 60 + parseInt(log?.split("h")[1]?.replace("min", "") || 0);
+        // Aujourd'hui
+        if (sameYMD(d, now)) todayMin += mins;
 
-    weekTotal += minutes;
-    colCount++;
+        // Semaine en cours
+        if (d >= monday && d <= sunday) weekMin += mins;
 
-    html += `<div class="calendar-day${isToday ? ' today' : ''}">
-      <strong>${day}</strong><br>${display}
-    </div>`;
+        // Mois en cours
+        if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) {
+          monthMin += mins;
+          const day = d.getDate();
+          cal[day] = `${Math.floor(mins/60)}h${pad(mins%60)}min`;
+        }
+      });
 
-    // ⏹ Fin de semaine ou fin du mois
-    if (colCount === 7 || day === totalDays) {
-      if (colCount < 7) {
-        for (let j = colCount; j < 7; j++) {
-          html += `<div class="calendar-day empty"></div>`;
+      return { todayMin, weekMin, monthMin, calendar: cal };
+    }
+
+    function generateCalendar(calendarData) {
+      const calendarDiv = document.getElementById("calendar");
+      calendarDiv.className = "calendar-container";
+      calendarDiv.innerHTML = `
+        <div class="calendar-title-container">
+          <h4 class="calendar-title">📅 Logtime journalier du mois</h4>
+        </div>
+      `;
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const today = now.getDate();
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const totalDays = lastDay.getDate();
+
+      let html = '<div class="calendar-grid">';
+      let weekTotal = 0;
+      let dow = firstDay.getDay(); // 0=dimanche..6=samedi
+      if (dow === 0) dow = 7; // Lundi=1
+
+      // Cases vides avant le 1er
+      for (let i = 1; i < dow; i++) html += `<div class="calendar-day empty"></div>`;
+      let colCount = dow - 1;
+
+      for (let day = 1; day <= totalDays; day++) {
+        const log = calendarData[day] || "";
+        const isToday = day === today;
+        const display = log ? log : "-";
+        const mins = log
+          ? (parseInt(log.split("h")[0]||0)*60 + parseInt((log.split("h")[1]||"").replace("min","")||0))
+          : 0;
+
+        weekTotal += mins;
+        colCount++;
+
+        html += `<div class="calendar-day${isToday ? ' today' : ''}">
+          <strong>${day}</strong><br>${display}
+        </div>`;
+
+        // Fin de semaine / fin de grille
+        if (colCount === 7 || day === totalDays) {
+          if (colCount < 7) {
+            for (let j = colCount; j < 7; j++) html += `<div class="calendar-day empty"></div>`;
+          }
+          const h = Math.floor(weekTotal / 60), m = weekTotal % 60;
+          html += `<div class="calendar-day total week-total">🧮 <strong>${h}h ${pad(m)}min</strong></div>`;
+          colCount = 0;
+          weekTotal = 0;
         }
       }
-
-      const hours = Math.floor(weekTotal / 60);
-      const mins = weekTotal % 60;
-
-      html += `<div class="calendar-day total week-total">
-        🧮 <strong>${hours}h ${mins}min</strong>
-      </div>`;
-
-      colCount = 0;
-      weekTotal = 0;
+      html += "</div>";
+      html += `
+        <div class="calendar-legend">
+          <div>Lun</div><div>Mar</div><div>Mer</div><div>Jeu</div>
+          <div>Ven</div><div>Sam</div><div>Dim</div><div>Total</div>
+        </div>
+      `;
+      calendarDiv.innerHTML += html;
     }
-  }
 
-  html += "</div>";
-  html += `
-    <div class="calendar-legend">
-      <div>Lun</div>
-      <div>Mar</div>
-      <div>Mer</div>
-      <div>Jeu</div>
-      <div>Ven</div>
-      <div>Sam</div>
-      <div>Dim</div>
-      <div>Total</div>
-    </div>
-  `;
-  calendarDiv.innerHTML += html;
-
-}
-
-
-
-    async function fetchLogtime() {
-      const login = document.getElementById("login").value;
+    function renderSummary({ todayMin, weekMin, monthMin, calendar }) {
       const results = document.getElementById("results");
-      results.innerHTML = "⏳ Chargement...";
 
+      const monthlyGoalSeconds = MONTHLY_GOAL_HOURS * 3600;
+      const percent = Math.min(100, Math.round((monthMin*60) / monthlyGoalSeconds * 100));
+
+      const remainingWeekMin  = Math.max(0, WEEKLY_GOAL_HOURS*60 - weekMin);
+      const remainingMonthMin = Math.max(0, MONTHLY_GOAL_HOURS*60 - monthMin);
+
+      results.innerHTML = `
+        <h3>📊 Résumé</h3>
+        <div class="row">
+          <span class="chip">📅 Aujourd'hui : <strong>${minutesToStr(todayMin)}</strong></span>
+          <span class="chip">📆 Cette semaine : <strong>${minutesToStr(weekMin)}</strong> &nbsp; <small>⏳ Reste : ${minutesToStr(remainingWeekMin)} | 🎯 ${WEEKLY_GOAL_HOURS}h</small></span>
+          <span class="chip">🗓️ Ce mois : <strong>${minutesToStr(monthMin)}</strong> &nbsp; <small>⏳ Reste : ${minutesToStr(remainingMonthMin)}</small></span>
+        </div>
+
+        <div class="progress-container" title="Objectif mensuel ${MONTHLY_GOAL_HOURS}h">
+          <div class="progress-bar" style="width:${percent}%;">${percent}%</div>
+        </div>
+        <p class="muted">🎯 Objectif mensuel : ${MONTHLY_GOAL_HOURS}h</p>
+      `;
+
+      generateCalendar(calendar);
+    }
+
+    async function loadAndRender() {
+      const results = document.getElementById("results");
       try {
-        const res = await fetch(`https://logtime-web.onrender.com/logtime?login=${login}`);
-        const data = await res.json();
-
-        if (data.error) {
-          results.innerHTML = "❌ Erreur : " + data.error;
-		} else {
-			const monthlyGoalSeconds = data.monthly_goal_hours * 3600.0;
-			const percent = Math.min(100, Math.round((data.month_raw / monthlyGoalSeconds) * 100));
-			const weeklyGoal = data.weekly_goal_hours;
-
-			results.innerHTML = `
-				<h3>📊 Résultat pour <strong>${login}</strong></h3>
-				<p>📅 Aujourd'hui : ${data.today}</p>
-				<p>📆 Cette semaine : ${data.week} <br><small>⏳ Reste : ${data.remaining_week} | 🎯 Objectif : ${weeklyGoal}h</small></p>
-				<p>🗓️ Ce mois : ${data.month} <br><small>⏳ Reste : ${data.remaining_month}</small></p>
-
-				<div class="progress-container">
-				<div class="progress-bar" style="width:${percent}%;">${percent}%</div>
-				</div>
-				<p>🎯 Objectif mensuel : ${data.monthly_goal_hours}h</p>
-			`;
-			generateCalendar(data.calendar);
-		}
+        results.textContent = "⏳ Chargement…";
+        const text = await fetchCSV(SHEET_CSV_URL);
+        const rows = parseCSV(text);
+        const agg  = aggregate(rows);
+        renderSummary(agg);
       } catch (e) {
-        results.innerHTML = "❌ Erreur de requête : " + e;
+        results.innerHTML = `<span class="error">❌ Erreur de chargement : ${e.message}</span>`;
       }
     }
-	function toggleView() {
-  const results = document.getElementById("results");
-  const calendar = document.getElementById("calendar");
 
-  if (results.style.display === "none") {
-    results.style.display = "block";
-    calendar.style.display = "none";
-  } else {
-    results.style.display = "none";
-    calendar.style.display = "block";
-  }
-}
+    function toggleView() {
+      const results = document.getElementById("results");
+      const calendar = document.getElementById("calendar");
+      const showCal = results.style.display !== "none";
+      results.style.display = showCal ? "none" : "block";
+      calendar.style.display = showCal ? "block" : "none";
+    }
 
-// Optionnel : cacher le calendrier par défaut
-window.onload = () => {
-  document.getElementById("calendar").style.display = "none";
-};
-
+    window.onload = loadAndRender;
   </script>
 </body>
 </html>
