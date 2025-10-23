@@ -25,7 +25,9 @@
     .calendar-day.total { background:#1f3d2b; border:1px solid #2e7d32; }
     .error { color:#fca5a5; }
     .muted { opacity:.8; font-size:.95rem; }
-    .row { display:flex; gap:1rem; flex-wrap:wrap; }
+    .row {
+        display: flex; gap: 1rem; flex-direction: column-reverse; align-items: center;
+    }    
     .chip { background:#444; padding:.25rem .5rem; border-radius:999px; }
     button { background:#4b9465; color:#fff; border:none; padding:.6rem .9rem; border-radius:8px; cursor:pointer; }
     button:hover { filter:brightness(1.05); }
