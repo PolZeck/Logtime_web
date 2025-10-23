@@ -4,10 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Logtime 42</title>
-  <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* Petits styles de secours si style.css est vide/absent */
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial; margin: 0; padding: 2rem; background:#222; color:#eee; }
     .dark { background:#222; color:#eee; } .light { background:#f4f4f4; color:#111; }
     h2 { text-align:center; font-family: Orbitron, sans-serif; letter-spacing: .5px; }
@@ -37,7 +35,6 @@
   <h2>🔎 Logtime 42 🔎</h2>
 
   <div class="panel" style="text-align:center">
-    <!-- plus de sélection d'utilisateur : c'est ton sheet perso -->
     <button onclick="toggleView()" style="margin-bottom: .5rem;">🎛️ Basculer Résumé / Calendrier</button>
     <div id="results" class="muted">⏳ Chargement…</div>
   </div>
@@ -46,10 +43,12 @@
 
   <script>
     // ========= CONFIG =========
+    // Ton lien "pubhtml" converti en CSV
     const SHEET_CSV_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPQeAGAWJrpnDLjyB2Xzl3qvJPYkK805vbWX-8vXJprO06mvwdXVKOa2jsvGwDkL0IxXvO4YTy4r5F/pub?gid=0&single=true&output=csv";
-    const MONTHLY_GOAL_HOURS = 140; // 🎯 objectif mois
-    const WEEKLY_GOAL_HOURS  = 35;  // 🎯 objectif semaine
+
+    // Weekly goal (peut rester fixe ou être calculé, ici fixe pour rester fidèle à ton site)
+    const WEEKLY_GOAL_HOURS  = 35;
 
     // ========= THEME =========
     function toggleTheme() {
@@ -78,32 +77,46 @@
       return (h*60 + m) | 0;
     };
     const parseFRDate = (s) => {
-      // "DD/MM/YYYY" -> Date (local)
       const [d,m,y] = s.split("/").map(Number);
       return new Date(y, m-1, d);
     };
     const sameYMD = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
 
     function getWeekBounds(date) {
-      // Lundi..Dimanche
       const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      const day = (d.getDay() + 6) % 7; // 0=lundi, 6=dimanche
+      const day = (d.getDay() + 6) % 7; // 0=lundi
       const monday = new Date(d); monday.setDate(d.getDate() - day);
       const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
       return { monday, sunday };
     }
 
-    // ========= CSV FETCH & BUILD =========
+    // ========= CSV FETCH & PARSE =========
     async function fetchCSV(url) {
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.text();
     }
 
-    function parseCSV(text) {
-      // Simple parse: split lines, then commas (ton sheet n'a pas de virgules dans les cellules A/B)
-      const lines = text.trim().split(/\r?\n/);
-      // Cherche entêtes "DATE" / "Logtime" si présents :
+    // Lecture robuste de F3 (ligne 3, colonne 6) depuis le CSV complet
+    function extractMonthlyGoalFromCSV(csvText) {
+      const lines = csvText.split(/\r?\n/);
+      // On vise F3 = row index 2 (0-based), col index 5 (0-based)
+      // Mais on sécurise: on prend la première valeur numérique trouvée entre lignes 2..5 sur la colonne 6.
+      for (let r = 2; r <= Math.min(5, lines.length-1); r++) {
+        const cols = lines[r].split(",");
+        if (cols.length >= 6) {
+          const raw = (cols[5] || "").replace(/[^\d.,-]/g, "").replace(",", ".");
+          const num = parseFloat(raw);
+          if (!Number.isNaN(num) && num > 0) return Math.round(num);
+        }
+      }
+      return null; // laisser le fallback
+    }
+
+    function parseCSVRowsForLogtime(csvText) {
+      const lines = csvText.trim().split(/\r?\n/);
+
+      // détecte une éventuelle ligne d'entêtes "DATE,Logtime"
       let startIdx = 0;
       if (lines[0].toLowerCase().includes("date") && lines[0].toLowerCase().includes("logtime")) {
         startIdx = 1;
@@ -120,7 +133,6 @@
     }
 
     function aggregate(rows) {
-      // Map par date -> minutes
       const map = new Map();
       rows.forEach(r => {
         const mins = strToMinutes(r.log);
@@ -131,24 +143,17 @@
       const { monday, sunday } = getWeekBounds(now);
 
       let todayMin = 0, weekMin = 0, monthMin = 0;
-      // Pour calendrier : index par jour du mois courant
-      const cal = {}; // { [dayNumber]: "XhYmin" }
+      const cal = {};
 
       map.forEach((mins, k) => {
         const d = parseFRDate(k);
         if (isNaN(d)) return;
 
-        // Aujourd'hui
         if (sameYMD(d, now)) todayMin += mins;
-
-        // Semaine en cours
         if (d >= monday && d <= sunday) weekMin += mins;
-
-        // Mois en cours
         if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) {
           monthMin += mins;
-          const day = d.getDate();
-          cal[day] = `${Math.floor(mins/60)}h${pad(mins%60)}min`;
+          cal[d.getDate()] = `${Math.floor(mins/60)}h${pad(mins%60)}min`;
         }
       });
 
@@ -178,7 +183,6 @@
       let dow = firstDay.getDay(); // 0=dimanche..6=samedi
       if (dow === 0) dow = 7; // Lundi=1
 
-      // Cases vides avant le 1er
       for (let i = 1; i < dow; i++) html += `<div class="calendar-day empty"></div>`;
       let colCount = dow - 1;
 
@@ -197,7 +201,6 @@
           <strong>${day}</strong><br>${display}
         </div>`;
 
-        // Fin de semaine / fin de grille
         if (colCount === 7 || day === totalDays) {
           if (colCount < 7) {
             for (let j = colCount; j < 7; j++) html += `<div class="calendar-day empty"></div>`;
@@ -218,14 +221,14 @@
       calendarDiv.innerHTML += html;
     }
 
-    function renderSummary({ todayMin, weekMin, monthMin, calendar }) {
+    function renderSummary({ todayMin, weekMin, monthMin, calendar }, monthlyGoalHours) {
       const results = document.getElementById("results");
 
-      const monthlyGoalSeconds = MONTHLY_GOAL_HOURS * 3600;
+      const monthlyGoalSeconds = monthlyGoalHours * 3600;
       const percent = Math.min(100, Math.round((monthMin*60) / monthlyGoalSeconds * 100));
 
       const remainingWeekMin  = Math.max(0, WEEKLY_GOAL_HOURS*60 - weekMin);
-      const remainingMonthMin = Math.max(0, MONTHLY_GOAL_HOURS*60 - monthMin);
+      const remainingMonthMin = Math.max(0, monthlyGoalHours*60 - monthMin);
 
       results.innerHTML = `
         <h3>📊 Résumé</h3>
@@ -235,10 +238,10 @@
           <span class="chip">🗓️ Ce mois : <strong>${minutesToStr(monthMin)}</strong> &nbsp; <small>⏳ Reste : ${minutesToStr(remainingMonthMin)}</small></span>
         </div>
 
-        <div class="progress-container" title="Objectif mensuel ${MONTHLY_GOAL_HOURS}h">
+        <div class="progress-container" title="Objectif mensuel ${monthlyGoalHours}h">
           <div class="progress-bar" style="width:${percent}%;">${percent}%</div>
         </div>
-        <p class="muted">🎯 Objectif mensuel : ${MONTHLY_GOAL_HOURS}h</p>
+        <p class="muted">🎯 Objectif mensuel : <strong>${monthlyGoalHours}h</strong> (lu depuis F3 du Google Sheet)</p>
       `;
 
       generateCalendar(calendar);
@@ -248,10 +251,17 @@
       const results = document.getElementById("results");
       try {
         results.textContent = "⏳ Chargement…";
-        const text = await fetchCSV(SHEET_CSV_URL);
-        const rows = parseCSV(text);
+        const csv = await fetchCSV(SHEET_CSV_URL);
+
+        // 1) Objectif mensuel depuis F3
+        const monthlyGoalFromSheet = extractMonthlyGoalFromCSV(csv);
+        const MONTHLY_GOAL_HOURS = Number.isFinite(monthlyGoalFromSheet) ? monthlyGoalFromSheet : 140;
+
+        // 2) Lignes A/B pour les calculs
+        const rows = parseCSVRowsForLogtime(csv);
         const agg  = aggregate(rows);
-        renderSummary(agg);
+
+        renderSummary(agg, MONTHLY_GOAL_HOURS);
       } catch (e) {
         results.innerHTML = `<span class="error">❌ Erreur de chargement : ${e.message}</span>`;
       }
